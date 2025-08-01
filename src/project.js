@@ -1,44 +1,42 @@
-import createTask from './task.js';
+import Task from './task.js';
+import { events } from './events.js';
 
-export default (props) => {
-    console.log(props);
-    console.log(this);
-    for (let key in props) {
-        this[key] = props[key];
-    }
-    console.log(this);
-    console.log(props);
-    let user = props.user;
-    let title = props.title;
-    let date = new Date(props.date);
-    let description = props.description;
-    let priority = props.priority;
-    let tasks;
-    (props.tasks === true) ? tasks = props.tasks : tasks = [createTask({user: 'user'})];
-
-    function newTask(props) {
-        if (props.title) {
-            let task = createTask(props);
-            tasks.push(task);
-        } else {
-            let task = createTask();
-            tasks.push(task);
+export default class Project {
+    constructor(props) {
+        this.user;
+        this.title;
+        this.date;
+        this.description;
+        this.priority;
+        this.tasks = [];
+        for (let key in props) {
+            this[key] = props[key];
         }
+        let test = new Task(props);
+        this.tasks.push(test);
+    }
+    newTask(props) {
+        let task = createTask(props);
+        this.tasks.push(task);
+        events.emit('taskCreated', task);
+    }
+    deleteTask(task) {
+        console.log(task);
+    }
+    getAllTasks() {
+        return this.tasks;
+    }
+    getTask(task) {
+        return this.tasks[task];
     }
 
-    function removeTask(task) {
-        //
-    }
-
-    function getAllTasks() {
-        return tasks;
-    }
-
-    function getTask(task) {
-        return tasks[task];
-    }
-
-    return {
-        getAllTasks
-    }
+    // return {
+    //     // user: user,
+    //     // title: title,
+    //     // date: date,
+    //     // description: description,
+    //     // priority: priority,
+    //     // tasks: tasks,
+    //     getAllTasks: getAllTasks,
+    // }
 }

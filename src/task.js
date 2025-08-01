@@ -1,9 +1,9 @@
-export default (props) => {
-    let user = props.user;
-    // let title = props.title;
-    // let date = new Date(props.date);
-    // let description = props.description;
-    // let priority = props.priority;
+export default class Task {
+    constructor(props) {
+        for (let key in props) {
+            this[key] = props[key];
+        }
+    }
 
     // function createSubTask(props) {
     //     //
@@ -13,31 +13,17 @@ export default (props) => {
     //     //
     // }
 
-    // function editDescription(newDescription) {
-    //     this.description = newDescription;
-    // }
-
-
-    function info() {
-        return {
-            user,
-            // title,
-            // date,
-            // description,
-            // priority,
-            //subTasks
-        }
+    description(newDescription) {
+         this.description = newDescription;
     }
 
-    return {
-        //user: props.user,
-        // title: props.title,
-        // date: new Date(props.date),
-        // description: props.description,
-        // priority: props.priority,
-        // tasks: props.tasks,
-        //createSubTask: createSubTask,
-        //editDescription: editDescription,
-        info,
+    info() {
+        let info = {};
+
+        for (let key in this) {
+            info[key] = this[key];
+        }
+
+        return (info);
     }
 }

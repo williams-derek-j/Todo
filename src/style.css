@@ -1,8 +1,46 @@
 body {
-    background-color: antiquewhite;
+    display: flex;
+    flex-direction: row;
+
+    width: 99vw;
+    height: 98vh;
+
+    background-color: black;
+
+}
+#sidebar {
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+    width: 10%;
+
+    background-color: maroon;
 }
 
-div {
-    width: 20px;
-    height: 20px;
+#content {
+    display: flex;
+    flex-direction: row;
+
+    box-sizing: border-box;
+    width: 90%;
+
+    overflow-x: scroll;
+
+    background-color: goldenrod;
+    padding: 2%;
+}
+
+#content .project {
+    display: flex;
+    flex-direction: column;
+
+    flex: auto;
+
+    max-width: 50%;
+    min-width: 20%;
+
+    background-color: antiquewhite;
+    margin: 1%;
+    padding: 1%;
 }
