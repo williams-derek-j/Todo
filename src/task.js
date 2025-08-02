@@ -1,8 +1,17 @@
+import { events } from './events';
+
 export default class Task {
     constructor(props) {
         for (let key in props) {
             this[key] = props[key];
         }
+    }
+
+    init(render, parentRender) {
+        this.render = render;
+        this.renderParent = parentRender;
+
+        //events.on('taskEdited', this.editTask.bind(this));
     }
 
     // function createSubTask(props) {
@@ -21,9 +30,28 @@ export default class Task {
         let info = {};
 
         for (let key in this) {
-            info[key] = this[key];
+            if (typeof this[key] !== 'object') {
+                info[key] = this[key];
+            }
         }
-
         return (info);
+    }
+
+    editTask(taskEdited) {
+        if (taskEdited === this.render) {
+            for (let key in this) {
+                if (key === taskEdited.getAttribute('className')) {
+                    this[key] = taskEdited.textContent;
+                }
+            }
+        }
+    }
+
+    setParent(parentNew) {
+        this.renderParent = parentNew;
+    }
+
+    getParent() {
+        return this.renderParent;
     }
 }

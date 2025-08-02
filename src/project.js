@@ -13,15 +13,27 @@ export default class Project {
             this[key] = props[key];
         }
         let test = new Task(props);
-        this.tasks.push(test);
+        let test2 = new Task({user: "mike"});
+        let test3 = new Task({user: "john"});
+        this.tasks.push(test, test2, test3);
+    }
+    init(render) {
+        this.render = render;
+
+        //events.on('taskDeleted', this.deleteTask.bind(this));
     }
     newTask(props) {
         let task = createTask(props);
         this.tasks.push(task);
         events.emit('taskCreated', task);
     }
-    deleteTask(task) {
-        console.log(task);
+    deleteTask(taskDeleted) {
+        console.log(taskDeleted);
+        if (taskDeleted.parentNode === this.render) {
+            this.tasks = this.tasks.filter((task) => {
+                return task.render !== taskDeleted;
+            })
+        }
     }
     getAllTasks() {
         return this.tasks;

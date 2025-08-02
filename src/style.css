@@ -44,3 +44,13 @@ body {
     margin: 1%;
     padding: 1%;
 }
+
+#content .project > .task {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    background-color: white;
+    margin-top: 0.5%;
+    margin-bottom: 0.5%;
+}

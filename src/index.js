@@ -16,13 +16,13 @@ const props = {
 }
 
 let test = new createProject(props);
-events.on('taskDeleted', test.deleteTask);
-// let test2 = new createProject(props);
-// let test3 = new createProject(props);
+//test.init();
+let test2 = new createProject(props);
+let test3 = new createProject(props);
 // let test4 = new createProject(props);
 // let test5 = new createProject(props);
 // let test6 = new createProject(props);
 //console.log(test);
-projects.push(test);//, test2, test3, test4, test5, test6);
+projects.push(test, test2, test3);//, test2, test3, test4, test5, test6);
 
 render(projects);
