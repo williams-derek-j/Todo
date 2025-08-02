@@ -16,6 +16,26 @@ body {
     width: 10%;
 
     background-color: maroon;
+    padding: 1%;
+}
+
+#sidebar > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+    max-width: 100%;
+
+    color: white;
+}
+
+#sidebar > div > label {
+
+    overflow: hidden;
 }
 
 #content {

@@ -3,7 +3,11 @@ import css from "./css.js";
 import { projects } from "./index.js";
 import { events } from "./events.js";
 
+const content = document.querySelector('#content');
+
 export default (projects) => {
+    clear(content);
+
     projects.forEach((project) => {
         const projectRender = document.createElement('div');
         projectRender.classList.add('project');
@@ -110,7 +114,7 @@ export default (projects) => {
                     }
                     taskRender.append(maxContainer);
                 } else {
-                    console.log(task.render);
+                    //console.log(task.render);
                     task.render.querySelector('.maxContainer').remove();
                     //clear(task.querySelector('.maxContainer'));
                 }
