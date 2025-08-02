@@ -31,7 +31,7 @@ body {
     padding: 2%;
 }
 
-#content .project {
+#content > .project {
     display: flex;
     flex-direction: column;
 
@@ -45,28 +45,61 @@ body {
     padding: 1%;
 }
 
-#content .project > .task {
+#content > .project > .task {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    /*flex: auto;*/
+    max-height: fit-content;
+
+    background-color: white;
+    margin-top: 0.5%;
+    margin-bottom: 0.5%;
+}
+/*#content > .project > .task > button {*/
+/*    flex-grow: 0;*/
+/*}*/
+/*#content > .project > .task > button:first-child {*/
+/*    grid-area: a;*/
+/*}*/
+/*#content > .project > .task > button:last-child {*/
+/*    grid-area: c;*/
+/*}*/
+#content > .project > .task > .miniContainer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: stretch;
+}
 
+#content > .project > .task > .miniContainer > span {
     flex: auto;
-    max-height: 10%;
+}
+
+#content > .project > .task.expanded {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    /*flex-grow: 1;*/
+    max-height: fit-content;
 
     background-color: white;
     margin-top: 0.5%;
     margin-bottom: 0.5%;
 }
 
-#content .project > .task.expanded {
+#content > .project > .task.expanded > .maxContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+}
+#content > .project > .task.expanded > .maxContainer > div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
-    flex-grow: 3;
-    max-height: 20%;
-
-    background-color: white;
-    margin-top: 0.5%;
-    margin-bottom: 0.5%;
+    align-items: stretch;
 }

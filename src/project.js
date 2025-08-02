@@ -12,9 +12,9 @@ export default class Project {
         for (let key in props) {
             this[key] = props[key];
         }
-        let test = new Task(props);
-        let test2 = new Task({user: "mike"});
-        let test3 = new Task({user: "john"});
+        let test = new Task('user','title',props);
+        let test2 = new Task('user2','title2',props);
+        let test3 = new Task('user3','title3',props);
         this.tasks.push(test, test2, test3);
     }
     init(render) {

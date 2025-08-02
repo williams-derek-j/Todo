@@ -1,9 +1,17 @@
 import { events } from './events';
 
 export default class Task {
-    constructor(props) {
+    constructor(user, title, props) {
+        this.user = user;
+        this.title = title;
+        // this.date;
+        // this.description;
+        // this.priority;
+        this.details = {};
         for (let key in props) {
-            this[key] = props[key];
+            //console.log(key);
+            this.details[key] = props[key];
+            //console.log(this.details)
         }
     }
 
@@ -26,25 +34,24 @@ export default class Task {
          this.description = newDescription;
     }
 
-    info() {
-        let info = {};
+    getDetails() {
+        let details = {};
 
-        for (let key in this) {
-            if (typeof this[key] !== 'object') {
-                info[key] = this[key];
+        for (let key in this.details) {
+            if (typeof this.details[key] !== 'object') {
+                details[key] = this.details[key];
             }
         }
-        return (info);
+        return (details);
     }
 
     editDetail(detailEdited) {
-        if (detailEdited.parentNode === this.render) {
-            for (let key in this) {
-                if (key === detailEdited.className) {
-                    this[key] = detailEdited.firstChild.textContent;
-                }
+        for (let key in this.details) {
+            if (key === detailEdited.className) {
+                this.details[key] = detailEdited.firstChild.textContent;
+                //console.log(this.details[key]);
             }
-        }
+        } // if (detailEdited.parentNode.parentNode === this.render) {
     }
 
     setParent(parentNew) {

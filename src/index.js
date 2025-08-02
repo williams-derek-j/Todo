@@ -14,11 +14,23 @@ const props = {
     description: 'description',
     priority: 'priority',
 }
+const props2 = {
+    user: 'user2',
+    title: 'title2',
+    description: 'description2',
+    priority: 'priority2',
+}
+const props3 = {
+    user: 'user3',
+    title: 'title3',
+    description: 'description3',
+    priority: 'priority3',
+}
 
 let test = new createProject(props);
 //test.init();
-let test2 = new createProject(props);
-let test3 = new createProject(props);
+let test2 = new createProject(props2);
+let test3 = new createProject(props2);
 // let test4 = new createProject(props);
 // let test5 = new createProject(props);
 // let test6 = new createProject(props);
