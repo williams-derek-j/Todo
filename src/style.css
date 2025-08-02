@@ -37,8 +37,8 @@ body {
 
     flex: auto;
 
-    max-width: 50%;
-    min-width: 20%;
+    max-width: 20%;
+    min-width: 400px;
 
     background-color: antiquewhite;
     margin: 1%;
@@ -49,6 +49,22 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    flex: auto;
+    max-height: 10%;
+
+    background-color: white;
+    margin-top: 0.5%;
+    margin-bottom: 0.5%;
+}
+
+#content .project > .task.expanded {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    flex-grow: 3;
+    max-height: 20%;
 
     background-color: white;
     margin-top: 0.5%;

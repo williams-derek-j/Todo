@@ -4,17 +4,17 @@ import { events } from "./events.js";
 
 export default (projects) => {
     projects.forEach((project) => {
-        let projectRender = document.createElement('div');
+        const projectRender = document.createElement('div');
         projectRender.classList.add('project');
         project.init(projectRender);
 
-        let tasks = project.getAllTasks();
+        const tasks = project.getAllTasks();
         tasks.forEach((task) => {
-            let taskRender = document.createElement('div');
+            const taskRender = document.createElement('div');
             taskRender.classList.add('task');
             task.init(taskRender, projectRender);
 
-            let buttonDel = document.createElement('button');
+            const buttonDel = document.createElement('button');
             buttonDel.textContent = "X";
             css(buttonDel, {
                 'margin-right': "1%",
@@ -27,33 +27,47 @@ export default (projects) => {
             })
             taskRender.appendChild(buttonDel);
 
-            let info = task.info();
+            const info = task.info();
             for (let key in info) {
-                let detailRender = document.createElement('div');
+                const detailRender = document.createElement('div');
                 detailRender.classList.add(key);
                 detailRender.textContent = info[key];
 
-                let buttonEdit = document.createElement('button');
+                const buttonEdit = document.createElement('button');
                 buttonEdit.textContent = "E";
                 css(buttonEdit, {
-                    'margin-right': "1%",
+                    'margin-left': "1%",
                 })
                 buttonEdit.addEventListener('click', (event) => {
                     const edited = event.target.closest('div');
-                    let valueNew = prompt("New Value:", `${edited.firstChild.textContent}`);
+                    const valueNew = prompt("New Value:", `${edited.firstChild.textContent}`);
                     if (valueNew !== null) {
                         edited.childNodes.forEach((child) => {
                             if (child.nodeType === Node.TEXT_NODE) {
                                 child.textContent = valueNew;
                             }
                         })
-                        task.editTask(edited)
+                        task.editDetail(edited)
                         //events.emit('taskEdited', edited);
                     }
                 })
                 detailRender.append(buttonEdit);
                 taskRender.append(detailRender)//document.createElement('div').textContent = info[key])
             }
+
+            const buttonExpand = document.createElement('button');
+            buttonExpand.textContent = "V";
+            css(buttonExpand, {
+                'margin-right': "1%",
+            })
+            buttonExpand.addEventListener('click', (event) => {
+                const expanded = event.target.closest('.task');
+                expanded.classList.toggle('expanded');
+
+                buttonExpand.textContent === "V" ? buttonExpand.textContent = "^" : buttonExpand.textContent = "V";
+            })
+            taskRender.append(buttonExpand);
+
             projectRender.appendChild(taskRender);
         })
         document.querySelector('#content').appendChild(projectRender);

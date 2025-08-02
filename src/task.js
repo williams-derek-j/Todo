@@ -37,11 +37,11 @@ export default class Task {
         return (info);
     }
 
-    editTask(taskEdited) {
-        if (taskEdited === this.render) {
+    editDetail(detailEdited) {
+        if (detailEdited.parentNode === this.render) {
             for (let key in this) {
-                if (key === taskEdited.getAttribute('className')) {
-                    this[key] = taskEdited.textContent;
+                if (key === detailEdited.className) {
+                    this[key] = detailEdited.firstChild.textContent;
                 }
             }
         }

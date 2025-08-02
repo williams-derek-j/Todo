@@ -28,7 +28,6 @@ export default class Project {
         events.emit('taskCreated', task);
     }
     deleteTask(taskDeleted) {
-        console.log(taskDeleted);
         if (taskDeleted.parentNode === this.render) {
             this.tasks = this.tasks.filter((task) => {
                 return task.render !== taskDeleted;
