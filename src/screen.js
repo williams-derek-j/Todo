@@ -2,6 +2,7 @@ import clear from "./clear.js";
 import css from "./css.js";
 import { projects } from "./index.js";
 import { events } from "./events.js";
+import { taskProperties } from "./taskProperties.js";
 
 const content = document.querySelector('#content');
 
@@ -13,6 +14,8 @@ export default (projects) => {
         projectRender.classList.add('project');
         project.init(projectRender);
 
+        const tasksContainer = document.createElement('div');
+        tasksContainer.classList.add('tasksContainer');
         const tasks = project.getAllTasks();
         tasks.forEach((task) => {
             const taskRender = document.createElement('div');
@@ -35,40 +38,7 @@ export default (projects) => {
             })
             miniContainer.appendChild(buttonDel);
 
-            // const info = task.info();
-            // for (let key in info) {
-            //     const detailRender = document.createElement('div');
-            //     detailRender.classList.add(key);
-            //     detailRender.textContent = info[key];
-            //
-            //     const buttonEdit = document.createElement('button');
-            //     buttonEdit.textContent = "E";
-            //     css(buttonEdit, {
-            //         'margin-left': "1%",
-            //     })
-            //     buttonEdit.addEventListener('click', (event) => {
-            //         const edited = event.target.closest('div');
-            //         const valueNew = prompt("New Value:", `${edited.firstChild.textContent}`);
-            //         if (valueNew !== null) {
-            //             edited.childNodes.forEach((child) => {
-            //                 if (child.nodeType === Node.TEXT_NODE) {
-            //                     child.textContent = valueNew;
-            //                 }
-            //             })
-            //             task.editDetail(edited)
-            //             //events.emit('taskEdited', edited);
-            //         }
-            //     })
-            //     detailRender.append(buttonEdit);
-            //     taskRender.append(detailRender)document.createElement('div').textContent = info[key])
-            // }
-
-            // const miniContainer = document.createElement('div');
-            // miniContainer.classList.add('miniContainer');
-            miniContainer.append(document.createElement('span').textContent= task.title);
-            // taskRender.append(miniContainer);
-
-            //const buttonTitleEdit
+            miniContainer.append(document.createElement('span').textContent = task.title);
 
             const buttonExpand = document.createElement('button');
             buttonExpand.textContent = "V";
@@ -114,16 +84,53 @@ export default (projects) => {
                     }
                     taskRender.append(maxContainer);
                 } else {
-                    //console.log(task.render);
                     task.render.querySelector('.maxContainer').remove();
-                    //clear(task.querySelector('.maxContainer'));
                 }
             })
             miniContainer.append(buttonExpand);
             taskRender.append(miniContainer);
+            tasksContainer.append(taskRender);
 
-            projectRender.appendChild(taskRender);
+            projectRender.appendChild(tasksContainer);
         })
+
+        const createTaskContainer = document.createElement('div');
+        createTaskContainer.classList.add('createTaskContainer');
+
+        //console.log(taskProperties);
+        taskProperties.forEach((property) => {
+            const container = document.createElement('div');
+
+            const label = document.createElement('label');
+            label.setAttribute('for', 'prop');
+            label.textContent = `${property}:`.toUpperCase();
+
+            const prop = document.createElement(`input`);
+            prop.setAttribute('type', 'text');
+            prop.classList.add(`${property}`.toUpperCase());
+
+            container.append(label, prop);
+            createTaskContainer.append(container);
+        })
+
+        const buttonSubmit = document.createElement('button');
+        buttonSubmit.textContent = "Submit";
+        css(buttonSubmit, {
+            'align-self': 'stretch',
+        })
+        buttonSubmit.addEventListener('click', (event) => {
+            const data = {}
+            const inputs = projectRender.querySelectorAll('input');
+            inputs.forEach((input) => {
+                data[`${input.className}`.toLowerCase()] = input.value;
+            })
+            project.createTask(data.user, data.title, data);
+            events.emit('taskSubmitted', data);
+        })
+        createTaskContainer.append(buttonSubmit);
+
+        projectRender.append(createTaskContainer);
+
         document.querySelector('#content').appendChild(projectRender);
     });
 }

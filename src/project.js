@@ -22,10 +22,11 @@ export default class Project {
 
         //events.on('taskDeleted', this.deleteTask.bind(this));
     }
-    newTask(props) {
-        let task = createTask(props);
+    createTask(user, title, props) {
+        console.log(user, title)
+        let task = new Task(user, title, props);
         this.tasks.push(task);
-        events.emit('taskCreated', task);
+        //events.emit('taskCreated', task);
     }
     deleteTask(taskDeleted) {
         if (taskDeleted.parentNode === this.render) {

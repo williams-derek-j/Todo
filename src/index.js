@@ -38,24 +38,25 @@ let test3 = new createProject(props3);
 // let test4 = new createProject(props);
 // let test5 = new createProject(props);
 // let test6 = new createProject(props);
-//console.log(test);
+
 projects.push(test, test2, test3);//, test2, test3, test4, test5, test6);
 live.push(test, test2, test3);
-projects.forEach((project) => {
-    const container = document.createElement('div');
 
-    let check = document.createElement('input')
-    check.type = 'checkbox';
-    check.checked = 'checked';
-    check.name = `${project.title}`;
-    check.project = project;
-    check.addEventListener('change',(event) => {
-        if (!check.checked) {
+projects.forEach((project) => { // can put this in screen.js
+    const toggleContainer = document.createElement('div');
+
+    let toggle = document.createElement('input')
+    toggle.type = 'checkbox';
+    toggle.checked = 'checked';
+    toggle.name = `${project.title}`;
+    toggle.project = project;
+    toggle.addEventListener('change',(event) => {
+        if (!toggle.checked) {
             live = live.filter((alive) => {
-                return alive !== check.project;
+                return alive !== toggle.project;
             })
         } else {
-            live.push(check.project);
+            live.push(toggle.project);
         }
         render(live);
     })
@@ -65,9 +66,15 @@ projects.forEach((project) => {
     css(label, {
         'htmlFor': `${project.title}`,
     })
-    container.append(label);
-    container.append(check);
-    sidebar.appendChild(container);
+    toggleContainer.append(label);
+    toggleContainer.append(toggle);
+    sidebar.appendChild(toggleContainer);
 })
 
 render(projects);
+
+function render2() {
+    render(live);
+}
+
+events.on('taskSubmitted', render2);

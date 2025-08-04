@@ -54,6 +54,7 @@ body {
 #content > .project {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 
     flex: auto;
 
@@ -65,7 +66,13 @@ body {
     padding: 1%;
 }
 
-#content > .project > .task {
+#content > .project > .tasksContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+#content > .project > .tasksContainer > .task {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -77,27 +84,19 @@ body {
     margin-top: 0.5%;
     margin-bottom: 0.5%;
 }
-/*#content > .project > .task > button {*/
-/*    flex-grow: 0;*/
-/*}*/
-/*#content > .project > .task > button:first-child {*/
-/*    grid-area: a;*/
-/*}*/
-/*#content > .project > .task > button:last-child {*/
-/*    grid-area: c;*/
-/*}*/
-#content > .project > .task > .miniContainer {
+
+#content > .project > .tasksContainer > .task > .miniContainer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
 }
 
-#content > .project > .task > .miniContainer > span {
+#content > .project > .tasksContainer > .task > .miniContainer > span {
     flex: auto;
 }
 
-#content > .project > .task.expanded {
+#content > .project > .tasksContainer > .task.expanded {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -111,13 +110,28 @@ body {
     margin-bottom: 0.5%;
 }
 
-#content > .project > .task.expanded > .maxContainer {
+#content > .project > .tasksContainer > .task.expanded > .maxContainer {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: stretch;
 }
-#content > .project > .task.expanded > .maxContainer > div {
+
+#content > .project > .tasksContainer > .task.expanded > .maxContainer > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+#content > .project > .createTaskContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+#content > .project > .createTaskContainer > div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
