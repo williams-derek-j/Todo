@@ -15,7 +15,7 @@ export default class Task {
         }
     }
 
-    init(render, parentRender) {
+    setRender(render, parentRender) {
         this.render = render;
         this.renderParent = parentRender;
 

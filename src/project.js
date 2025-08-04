@@ -17,7 +17,7 @@ export default class Project {
         let test3 = new Task('user3','title3',props);
         this.tasks.push(test, test2, test3);
     }
-    init(render) {
+    setRender(render) {
         this.render = render;
 
         //events.on('taskDeleted', this.deleteTask.bind(this));
@@ -27,6 +27,7 @@ export default class Project {
         let task = new Task(user, title, props);
         this.tasks.push(task);
         //events.emit('taskCreated', task);
+        return(task);
     }
     deleteTask(taskDeleted) {
         if (taskDeleted.parentNode === this.render) {
