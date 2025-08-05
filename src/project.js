@@ -5,14 +5,17 @@ export default class Project {
     constructor(user, title, props) {
         this.user = user;
         this.title = title;
+
         this.date;
         this.description;
         this.priority;
         this.index;
+
         this.tasks = [];
         for (let key in props) {
             this[key] = props[key];
         }
+
         let test = new Task('user','title',props);
         let test2 = new Task('user2','title2',props);
         let test3 = new Task('user3','title3',props);
@@ -24,14 +27,15 @@ export default class Project {
         //events.on('taskDeleted', this.deleteTask.bind(this));
     }
     createTask(user, title, props) {
-        console.log(user, title)
         let task = new Task(user, title, props);
+
         this.tasks.push(task);
+
         //events.emit('taskCreated', task);
         return(task);
     }
     deleteTask(taskDeleted) {
-        if (taskDeleted.parentNode === this.render) {
+        if (taskDeleted.parentNode.parentNode === this.render) { // should probably remove this, no longer serves a purpose and introduces point of failure if the dom hierarchy changes
             this.tasks = this.tasks.filter((task) => {
                 return task.render !== taskDeleted;
             })

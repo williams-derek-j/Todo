@@ -18,18 +18,21 @@ const props = {
     title: 'titletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitletitle',
     description: 'description',
     priority: 'priority',
+    index: '0',
 }
 const props2 = {
     user: 'user2',
     title: 'title2',
     description: 'description2',
     priority: 'priority2',
+    index: '1',
 }
 const props3 = {
     user: 'user3',
     title: 'title3',
     description: 'description3',
     priority: 'priority3',
+    index: '2',
 }
 
 let test = new createProject(props.user, props.title, props);
@@ -81,13 +84,12 @@ function render2() {
 }
 
 function projectSubmitted(data) {
-    console.log(data);
     const created = new Project(data.user, data.title, data);
+    created.index = projects.length;
 
     projects.push(created);
     live.push(created);
 
-    console.log(projects)
     render(live);
     renderNav(projects, live);
 }

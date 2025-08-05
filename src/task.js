@@ -8,7 +8,9 @@ export default class Task {
         // this.description;
         // this.priority;
         this.details = {};
+        console.log(props)
         for (let key in props) {
+            console.log(key)
             //console.log(key);
             this.details[key] = props[key];
             //console.log(this.details)

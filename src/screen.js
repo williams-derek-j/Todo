@@ -1,7 +1,5 @@
 import clear from "./clear.js";
 import css from "./css.js";
-import Project from "./project.js";
-import { projects } from "./index.js";
 import { events } from "./events.js";
 import { taskProperties } from "./taskProperties.js";
 
@@ -39,7 +37,7 @@ function renderCreateProject() {
     buttonSubmit.addEventListener('click', (event) => {
         const data = {}
 
-        const inputs = sidebar.querySelectorAll('input');
+        const inputs = sidebar.querySelector('.createProjectContainer').querySelectorAll('input');
         inputs.forEach((input) => {
             data[`${input.className}`.toLowerCase()] = input.value;
         })
@@ -73,7 +71,8 @@ export function renderNav(projects, live) {
                     return alive !== toggle.project;
                 })
             } else {
-                live.push(toggle.project);
+                live.splice(project.index, 0, project);
+                //live.push(toggle.project);
 
                 // clear(sidebar)
                 // renderNav(projects, live);
@@ -145,6 +144,7 @@ function renderTask(project, task) {
             const info = task.getDetails();
             for (let key in info) {
                 const detailRender = document.createElement('div');
+
                 detailRender.classList.add(key);
                 detailRender.textContent = info[key];
 
