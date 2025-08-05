@@ -2,12 +2,13 @@ import Task from './task.js';
 import { events } from './events.js';
 
 export default class Project {
-    constructor(props) {
-        this.user;
-        this.title;
+    constructor(user, title, props) {
+        this.user = user;
+        this.title = title;
         this.date;
         this.description;
         this.priority;
+        this.index;
         this.tasks = [];
         for (let key in props) {
             this[key] = props[key];

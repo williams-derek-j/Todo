@@ -6,20 +6,30 @@ body {
     height: 98vh;
 
     background-color: black;
-
 }
+
 #sidebar {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
 
     box-sizing: border-box;
     width: 10%;
 
     background-color: maroon;
+    color: white;
     padding: 1%;
 }
 
-#sidebar > div {
+#sidebar > .projectsContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+#sidebar > .projectsContainer > div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -29,13 +39,32 @@ body {
 
     box-sizing: border-box;
     max-width: 100%;
-
-    color: white;
 }
 
-#sidebar > div > label {
+#sidebar > .projectsContainer > div > label {
 
     overflow: hidden;
+}
+
+#sidebar > .createProjectContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+#sidebar > .createProjectContainer > span {
+    font-size: x-large;
+    font-weight: bold;
+
+    margin-bottom: 2%
+}
+
+#sidebar > .createProjectContainer > div > input {
+    max-width: 95%;
 }
 
 #content {

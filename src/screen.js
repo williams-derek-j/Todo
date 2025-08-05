@@ -1,10 +1,106 @@
 import clear from "./clear.js";
 import css from "./css.js";
+import Project from "./project.js";
 import { projects } from "./index.js";
 import { events } from "./events.js";
 import { taskProperties } from "./taskProperties.js";
 
 const content = document.querySelector('#content');
+const sidebar = document.querySelector('#sidebar');
+
+function renderCreateProject() {
+    const createProjectContainer = document.createElement("div");
+    createProjectContainer.classList.add('createProjectContainer');
+
+    const header = document.createElement('span');
+    header.textContent = 'New Project:';
+    createProjectContainer.append(header);
+
+    taskProperties.forEach((property) => {
+        const container = document.createElement('div');
+
+        const label = document.createElement('label');
+        label.setAttribute('for', 'prop');
+        label.textContent = `${property}:`.toUpperCase();
+
+        const prop = document.createElement(`input`);
+        prop.setAttribute('type', 'text');
+        prop.classList.add(`${property}`.toUpperCase());
+
+        container.append(label, prop);
+        createProjectContainer.append(container);
+    })
+
+    const buttonSubmit = document.createElement('button');
+    buttonSubmit.textContent = "Submit";
+    css(buttonSubmit, {
+        'align-self': 'stretch',
+    })
+    buttonSubmit.addEventListener('click', (event) => {
+        const data = {}
+
+        const inputs = sidebar.querySelectorAll('input');
+        inputs.forEach((input) => {
+            data[`${input.className}`.toLowerCase()] = input.value;
+        })
+
+        //const project = new Project(data.user, data.title, data);
+
+        events.emit('projectSubmitted', data);
+    })
+    createProjectContainer.append(buttonSubmit);
+
+    return(createProjectContainer);
+}
+
+export function renderNav(projects, live) {
+    clear(sidebar);
+
+    const projectsContainer = document.createElement("div");
+    projectsContainer.classList.add('projectsContainer');
+
+    projects.forEach((project) => {
+        const toggleContainer = document.createElement('div');
+
+        let toggle = document.createElement('input')
+        toggle.type = 'checkbox';
+        toggle.checked = 'checked';
+        toggle.name = `${project.title}`;
+        toggle.project = project;
+        toggle.addEventListener('change',(event) => {
+            if (!toggle.checked) {
+                live = live.filter((alive) => {
+                    return alive !== toggle.project;
+                })
+            } else {
+                live.push(toggle.project);
+
+                // clear(sidebar)
+                // renderNav(projects, live);
+            }
+            render(live);
+            //clear(sidebar)
+            //renderNav(projects, live);
+        })
+
+        let label = document.createElement('label');
+        label.textContent = `${project.title}`;
+        css(label, {
+            'htmlFor': `${project.title}`,
+        })
+        toggleContainer.append(label);
+
+        toggleContainer.append(toggle);
+
+        projectsContainer.append(toggleContainer);
+    })
+    sidebar.appendChild(projectsContainer);
+
+    const createProject = renderCreateProject();
+    sidebar.appendChild(createProject);
+
+    return(live);
+}
 
 function renderTask(project, task) {
     const projectRender = project.render;
@@ -136,14 +232,14 @@ function renderCreateTask(project) {
         const task = project.createTask(data.user, data.title, data);
         //const taskRender = renderTask(project, task);
         //render(project);
-        events.emit('taskSubmitted', data);
+        events.emit('taskSubmitted', project);
     })
     createTaskContainer.append(buttonSubmit);
 
     return(createTaskContainer);
 }
 
-export default function render(projects) {
+export function render(projects) {
     clear(content);
 
     projects.forEach((project) => {

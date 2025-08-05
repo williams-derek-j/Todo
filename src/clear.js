@@ -1,5 +1,5 @@
 export default (node) => {
     while (node.firstChild) {
-        content.removeChild(content.lastChild);
+        node.removeChild(node.lastChild);
     }
 };
