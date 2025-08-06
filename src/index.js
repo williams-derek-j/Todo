@@ -4,7 +4,7 @@ import { events } from "./events";
 import User from "./user.js"
 import Project from "./project.js";
 import createProject from "./project.js";
-import { renderAllProjects, renderProject, renderNav } from "./screen.js";
+import { renderAllProjects, renderProject, renderNav, refreshProjects } from "./screen.js";
 
 const props = {
     user: 'user',
@@ -34,7 +34,7 @@ let test3 = new createProject(props3.user, props3.title, props3);
 
 const user = new User("user");
 
-const projects = [];
+let projects = [];
 let live = [];
 
 projects.push(test, test2, test3);//, test2, test3, test4, test5, test6);
@@ -65,16 +65,30 @@ function projectSubmitted(data) {
     projects.push(created);
     live.push(created);
 
-    renderAllProjects(live);
+    renderProject(created);
+    //renderAllProjects(live);
     renderNav(projects, live);
 }
 
 function projectToggled(live) { // project toggle (checkbox) has listener that calls function to add or remove said project from array of displayed projects, returns modified array
-    renderAllProjects(live);
+    refreshProjects(live);
+    //renderAllProjects(live);
+}
+
+function projectDeleted(deleted) {
+    projects = projects.filter((project) => {
+        return project !== deleted;
+    })
+    live = live.filter((project) => {
+        return project !== deleted;
+    })
+
+    renderNav(projects, live)
 }
 
 events.on('taskSubmitted', taskSubmitted);
 events.on('taskDeleted', taskDeleted);
 events.on('taskEdited', taskEdited);
 events.on('projectSubmitted', projectSubmitted);
-events.on('projectToggled', projectToggled)
+events.on('projectToggled', projectToggled);
+events.on('projectDeleted', projectDeleted);

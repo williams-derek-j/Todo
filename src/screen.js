@@ -157,9 +157,6 @@ function renderTask(project, task) {
 
     const buttonDel = document.createElement('button');
     buttonDel.textContent = "X";
-    css(buttonDel, {
-        'margin-right': "1%",
-    })
     buttonDel.addEventListener('click',(event) => {
         const deleted = event.target.closest('.task');
         deleted.parentNode.removeChild(deleted);
@@ -176,9 +173,6 @@ function renderTask(project, task) {
 
     const buttonExpand = document.createElement('button');
     buttonExpand.textContent = "V";
-    css(buttonExpand, {
-        'margin-right': "1%",
-    })
     buttonExpand.addEventListener('click', (event) => {
         const expanded = event.target.closest('.task');
         expanded.classList.toggle('expanded');
@@ -198,9 +192,6 @@ function renderTask(project, task) {
 
                 const buttonEdit = document.createElement('button');
                 buttonEdit.textContent = "E";
-                css(buttonEdit, {
-                    'margin-left': "1%",
-                })
                 buttonEdit.addEventListener('click', (event) => {
                     const edited = event.target.closest('div');
 
@@ -251,13 +242,37 @@ function renderAllTasks(project) {
 }
 
 export function renderProject(project) {
-    const nextRender = project.render.parentNode.children[Number(project.index) + 1];
+    let reRender = false;
+    let nextRender;
 
-    project.render.remove();
+    if (project.render) {
+        nextRender = project.render.parentNode.children[Number(project.index) + 1];
+
+        project.render.remove();
+
+        reRender = true;
+    }
 
     const projectRender = document.createElement('div');
     projectRender.classList.add('project');
     project.setRender(projectRender);
+
+    const buttonDel = document.createElement('button');
+    buttonDel.textContent = "X";
+    css(buttonDel, {
+        'align-self': 'flex-end'
+    })
+    buttonDel.addEventListener('click',(event) => {
+        const confirmed = confirm('Are you sure?')
+
+        if (confirmed) {
+            const deleted = event.target.closest('.project');
+            deleted.parentNode.removeChild(deleted);
+
+            events.emit('projectDeleted', project);
+        }
+    })
+    projectRender.appendChild(buttonDel);
 
     const tasksContainer = renderAllTasks(project);
     projectRender.appendChild(tasksContainer);
@@ -265,16 +280,45 @@ export function renderProject(project) {
     const createTaskRender = renderCreateTask(project);
     projectRender.appendChild(createTaskRender);
 
-    document.querySelector('#content').insertBefore(projectRender, nextRender);
+    if (reRender) {
+        document.querySelector('#content').insertBefore(projectRender, nextRender);
+    } else {
+        document.querySelector('#content').appendChild(projectRender);
+    }
 }
 
 export function renderAllProjects(projects) {
+    projects.forEach((project) => {
+        renderProject(project);
+    });
+}
+
+export function refreshProjects(projects) {
     clear(content);
 
     projects.forEach((project) => {
+        //renderProject(project); -- doesn't work, needs to have parentNode
+
         const projectRender = document.createElement('div');
         projectRender.classList.add('project');
         project.setRender(projectRender);
+
+        const buttonDel = document.createElement('button');
+        buttonDel.textContent = "X";
+        css(buttonDel, {
+            'align-self': 'flex-end'
+        })
+        buttonDel.addEventListener('click',(event) => {
+            const confirmed = confirm('Are you sure?')
+
+            if (confirmed) {
+                const deleted = event.target.closest('.project');
+                deleted.parentNode.removeChild(deleted);
+
+                events.emit('projectDeleted', project);
+            }
+        })
+        projectRender.appendChild(buttonDel);
 
         const tasksContainer = renderAllTasks(project);
         projectRender.appendChild(tasksContainer);
