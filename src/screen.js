@@ -3,8 +3,55 @@ import css from "./css.js";
 import { events } from "./events.js";
 import { taskProperties } from "./taskProperties.js";
 
+// I don't want the functions in this file to call each other, could get confusing -- unless the functions are separated for readability, e.g., renderAllTasks
+// Instead, just emit an event and let index.js come back here to call the appropriate render function
+
+// Also don't want to generate backend data here, i.e., don't want to call User, Task, Project classes here instead of in index.js (or in the classes themselves, e.g., Project creates a new Task)
+
 const content = document.querySelector('#content');
 const sidebar = document.querySelector('#sidebar');
+
+function renderCreateTask(project) {
+    const projectRender = project.render;
+
+    const createTaskContainer = document.createElement('div');
+    createTaskContainer.classList.add('createTaskContainer');
+
+    taskProperties.forEach((property) => {
+        const container = document.createElement('div');
+
+        const label = document.createElement('label');
+        label.setAttribute('for', 'prop');
+        label.textContent = `${property}:`.toUpperCase();
+
+        const prop = document.createElement(`input`);
+        prop.setAttribute('type', 'text');
+        prop.classList.add(`${property}`.toUpperCase());
+
+        container.append(label, prop);
+        createTaskContainer.append(container);
+    })
+
+    const buttonSubmit = document.createElement('button');
+    buttonSubmit.textContent = "Submit";
+    css(buttonSubmit, {
+        'align-self': 'stretch',
+    })
+    buttonSubmit.addEventListener('click', (event) => {
+        const data = {}
+
+        const inputs = projectRender.querySelectorAll('input');
+        inputs.forEach((input) => {
+            data[`${input.className}`.toLowerCase()] = input.value;
+        })
+        project.createTask(data.user, data.title, data); // create new task in the backend but no need to do DOM stuff here, the task will get rendered when the project is re-rendered
+
+        events.emit('taskSubmitted', project);
+    })
+    createTaskContainer.append(buttonSubmit);
+
+    return(createTaskContainer);
+}
 
 function renderCreateProject() {
     const createProjectContainer = document.createElement("div");
@@ -71,15 +118,11 @@ export function renderNav(projects, live) {
                     return alive !== toggle.project;
                 })
             } else {
-                live.splice(project.index, 0, project);
                 //live.push(toggle.project);
-
-                // clear(sidebar)
-                // renderNav(projects, live);
+                live.splice(project.index, 0, project); // live will get re-rendered when event is emitted, bc index.js is listening and will call screen
             }
-            render(live);
-            //clear(sidebar)
-            //renderNav(projects, live);
+            //render(live);
+            events.emit('projectToggled', live);
         })
 
         let label = document.createElement('label');
@@ -155,6 +198,7 @@ function renderTask(project, task) {
                 })
                 buttonEdit.addEventListener('click', (event) => {
                     const edited = event.target.closest('div');
+
                     const valueNew = prompt("New Value:", `${edited.firstChild.textContent}`);
                     if (valueNew !== null) {
                         edited.childNodes.forEach((child) => {
@@ -163,7 +207,6 @@ function renderTask(project, task) {
                             }
                         })
                         task.editDetail(edited)
-                        //events.emit('taskEdited', edited);
                     }
                 })
                 detailRender.append(buttonEdit);
@@ -197,49 +240,25 @@ function renderAllTasks(project) {
     return(tasksContainer);
 }
 
-function renderCreateTask(project) {
-    const projectRender = project.render;
+export function renderProject(project) {
+    const nextRender = project.render.parentNode.children[Number(project.index) + 1];
 
-    const createTaskContainer = document.createElement('div');
-    createTaskContainer.classList.add('createTaskContainer');
+    project.render.remove();
 
-    taskProperties.forEach((property) => {
-        const container = document.createElement('div');
+    const projectRender = document.createElement('div');
+    projectRender.classList.add('project');
+    project.setRender(projectRender);
 
-        const label = document.createElement('label');
-        label.setAttribute('for', 'prop');
-        label.textContent = `${property}:`.toUpperCase();
+    const tasksContainer = renderAllTasks(project);
+    projectRender.appendChild(tasksContainer);
 
-        const prop = document.createElement(`input`);
-        prop.setAttribute('type', 'text');
-        prop.classList.add(`${property}`.toUpperCase());
+    const createTaskRender = renderCreateTask(project);
+    projectRender.appendChild(createTaskRender);
 
-        container.append(label, prop);
-        createTaskContainer.append(container);
-    })
-
-    const buttonSubmit = document.createElement('button');
-    buttonSubmit.textContent = "Submit";
-    css(buttonSubmit, {
-        'align-self': 'stretch',
-    })
-    buttonSubmit.addEventListener('click', (event) => {
-        const data = {}
-        const inputs = projectRender.querySelectorAll('input');
-        inputs.forEach((input) => {
-            data[`${input.className}`.toLowerCase()] = input.value;
-        })
-        const task = project.createTask(data.user, data.title, data);
-        //const taskRender = renderTask(project, task);
-        //render(project);
-        events.emit('taskSubmitted', project);
-    })
-    createTaskContainer.append(buttonSubmit);
-
-    return(createTaskContainer);
+    document.querySelector('#content').insertBefore(projectRender, nextRender);
 }
 
-export function render(projects) {
+export function renderAllProjects(projects) {
     clear(content);
 
     projects.forEach((project) => {

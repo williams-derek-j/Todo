@@ -4,14 +4,7 @@ import { events } from "./events";
 import User from "./user.js"
 import Project from "./project.js";
 import createProject from "./project.js";
-import { render, renderNav } from "./screen.js";
-
-//const test = document.querySelector('#sidebar');
-
-const projects = [];
-let live = [];
-
-const user = new User("user");
+import { renderAllProjects, renderProject, renderNav } from "./screen.js";
 
 const props = {
     user: 'user',
@@ -36,51 +29,23 @@ const props3 = {
 }
 
 let test = new createProject(props.user, props.title, props);
-//test.init();
 let test2 = new createProject(props2.user, props2.title, props2);
 let test3 = new createProject(props3.user, props3.title, props3);
-// let test4 = new createProject(props);
-// let test5 = new createProject(props);
-// let test6 = new createProject(props);
+
+const user = new User("user");
+
+const projects = [];
+let live = [];
 
 projects.push(test, test2, test3);//, test2, test3, test4, test5, test6);
 live.push(test, test2, test3);
 
 live = renderNav(projects, live);
-// projects.forEach((project) => { // can put this in screen.js
-//     const toggleContainer = document.createElement('div');
-//
-//     let toggle = document.createElement('input')
-//     toggle.type = 'checkbox';
-//     toggle.checked = 'checked';
-//     toggle.name = `${project.title}`;
-//     toggle.project = project;
-//     toggle.addEventListener('change',(event) => {
-//         if (!toggle.checked) {
-//             live = live.filter((alive) => {
-//                 return alive !== toggle.project;
-//             })
-//         } else {
-//             live.push(toggle.project);
-//         }
-//         render(live);
-//     })
-//
-//     let label = document.createElement('label');
-//     label.textContent = `${project.title}`;
-//     css(label, {
-//         'htmlFor': `${project.title}`,
-//     })
-//     toggleContainer.append(label);
-//     toggleContainer.append(toggle);
-//
-//     sidebar.appendChild(toggleContainer);
-// })
 
-render(projects);
+renderAllProjects(projects);
 
-function render2() {
-    render(live);
+function taskSubmitted(project) {
+    renderProject(project);
 }
 
 function projectSubmitted(data) {
@@ -90,9 +55,14 @@ function projectSubmitted(data) {
     projects.push(created);
     live.push(created);
 
-    render(live);
+    renderAllProjects(live);
     renderNav(projects, live);
 }
 
-events.on('taskSubmitted', render2);
+function projectToggled(live) { // project toggle (checkbox) has listener that calls function to add or remove said project from array of displayed projects, returns modified array
+    renderAllProjects(live);
+}
+
+events.on('taskSubmitted', taskSubmitted);
 events.on('projectSubmitted', projectSubmitted);
+events.on('projectToggled', projectToggled)

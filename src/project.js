@@ -21,11 +21,13 @@ export default class Project {
         let test3 = new Task('user3','title3',props);
         this.tasks.push(test, test2, test3);
     }
+
     setRender(render) {
         this.render = render;
 
         //events.on('taskDeleted', this.deleteTask.bind(this));
     }
+
     createTask(user, title, props) {
         let task = new Task(user, title, props);
 
@@ -34,6 +36,7 @@ export default class Project {
         //events.emit('taskCreated', task);
         return(task);
     }
+
     deleteTask(taskDeleted) {
         if (taskDeleted.parentNode.parentNode === this.render) { // should probably remove this, no longer serves a purpose and introduces point of failure if the dom hierarchy changes
             this.tasks = this.tasks.filter((task) => {
@@ -41,20 +44,12 @@ export default class Project {
             })
         }
     }
+
     getAllTasks() {
         return this.tasks;
     }
+
     getTask(task) {
         return this.tasks[task];
     }
-
-    // return {
-    //     // user: user,
-    //     // title: title,
-    //     // date: date,
-    //     // description: description,
-    //     // priority: priority,
-    //     // tasks: tasks,
-    //     getAllTasks: getAllTasks,
-    // }
 }
