@@ -44,8 +44,18 @@ live = renderNav(projects, live);
 
 renderAllProjects(projects);
 
-function taskSubmitted(project) {
-    renderProject(project);
+function taskSubmitted(emitted) {
+    emitted.project.createTask(emitted.data.user, emitted.data.title, emitted.data);
+
+    renderProject(emitted.project);
+}
+
+function taskDeleted(emitted) {
+    emitted.project.deleteTask(emitted.task)
+}
+
+function taskEdited(emitted) {
+    emitted.task.editDetail(emitted.taskRender);
 }
 
 function projectSubmitted(data) {
@@ -64,5 +74,7 @@ function projectToggled(live) { // project toggle (checkbox) has listener that c
 }
 
 events.on('taskSubmitted', taskSubmitted);
+events.on('taskDeleted', taskDeleted);
+events.on('taskEdited', taskEdited);
 events.on('projectSubmitted', projectSubmitted);
 events.on('projectToggled', projectToggled)

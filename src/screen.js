@@ -44,9 +44,12 @@ function renderCreateTask(project) {
         inputs.forEach((input) => {
             data[`${input.className}`.toLowerCase()] = input.value;
         })
-        project.createTask(data.user, data.title, data); // create new task in the backend but no need to do DOM stuff here, the task will get rendered when the project is re-rendered
 
-        events.emit('taskSubmitted', project);
+        const emitted = {};
+        emitted['project'] = project;
+        emitted['data'] = data;
+
+        events.emit('taskSubmitted', emitted);
     })
     createTaskContainer.append(buttonSubmit);
 
@@ -89,8 +92,6 @@ function renderCreateProject() {
             data[`${input.className}`.toLowerCase()] = input.value;
         })
 
-        //const project = new Project(data.user, data.title, data);
-
         events.emit('projectSubmitted', data);
     })
     createProjectContainer.append(buttonSubmit);
@@ -113,7 +114,7 @@ export function renderNav(projects, live) {
         toggle.name = `${project.title}`;
         toggle.project = project;
         toggle.addEventListener('change',(event) => {
-            if (!toggle.checked) {
+            if (!toggle.checked) { // this could just remove the project node from the content container rather than returning modified live array, but the else statement would have to include logic for rendering a new project and splicing it in correct position, requiring renderProject
                 live = live.filter((alive) => {
                     return alive !== toggle.project;
                 })
@@ -161,9 +162,13 @@ function renderTask(project, task) {
     })
     buttonDel.addEventListener('click',(event) => {
         const deleted = event.target.closest('.task');
-        project.deleteTask(deleted);
         deleted.parentNode.removeChild(deleted);
-        //events.emit('taskDeleted', deleted);
+
+        const emitted = {}
+        emitted['project'] = project;
+        emitted['task'] = task;
+
+        events.emit('taskDeleted', emitted);
     })
     miniContainer.appendChild(buttonDel);
 
@@ -206,7 +211,12 @@ function renderTask(project, task) {
                                 child.textContent = valueNew;
                             }
                         })
-                        task.editDetail(edited)
+                        const emitted = {}
+                        emitted['task'] = task;
+                        emitted['taskRender'] = edited;
+
+                        events.emit('taskEdited', emitted);
+                        //task.editDetail(edited) -- emit instead to keep this cleaner, i.e., don't edit backend from file meant to control frontend
                     }
                 })
                 detailRender.append(buttonEdit);

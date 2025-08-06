@@ -1,5 +1,4 @@
 import Task from './task.js';
-import { events } from './events.js';
 
 export default class Project {
     constructor(user, title, props) {
@@ -24,8 +23,6 @@ export default class Project {
 
     setRender(render) {
         this.render = render;
-
-        //events.on('taskDeleted', this.deleteTask.bind(this));
     }
 
     createTask(user, title, props) {
@@ -33,16 +30,13 @@ export default class Project {
 
         this.tasks.push(task);
 
-        //events.emit('taskCreated', task);
         return(task);
     }
 
-    deleteTask(taskDeleted) {
-        if (taskDeleted.parentNode.parentNode === this.render) { // should probably remove this, no longer serves a purpose and introduces point of failure if the dom hierarchy changes
-            this.tasks = this.tasks.filter((task) => {
-                return task.render !== taskDeleted;
-            })
-        }
+    deleteTask(deleted) {
+        this.tasks = this.tasks.filter((task) => {
+            return task !== deleted;
+        })
     }
 
     getAllTasks() {
