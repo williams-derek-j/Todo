@@ -43,13 +43,12 @@ function renderCreateTask(project) {
         let valid = true;
         const inputs = projectRender.querySelectorAll('input');
         inputs.forEach((input) => {
-            console.log(input.value);
             if (input.value !== "") {
-                data[`${input.className}`.toLowerCase()] = input.value;
-
                 if (input.className.includes('error')) {
                     input.classList.toggle('error');
                 }
+
+                data[`${input.className}`.toLowerCase()] = input.value;
             } else {
                 input.classList.toggle('error')
                 //events.emit('taskSubmittedError', input);
@@ -58,6 +57,7 @@ function renderCreateTask(project) {
         })
 
         if (valid) {
+            console.log('taskEmitted');
             const emitted = {};
             emitted['parent'] = project;
             emitted['data'] = data;

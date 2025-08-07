@@ -44,16 +44,16 @@ live = renderNav(projects, live);
 
 function taskSubmitted(emitted) {
     emitted.parent.createTask(emitted.data.user, emitted.data.title, emitted.parent, emitted.data);
-    console.log(emitted.parent.getAllTasks());
 
+    console.log(emitted.data);
+    console.log(emitted.parent);
     renderAllTasks(emitted.parent);
     // const tasksContainer = renderAllTasks(emitted.parent)
     // emitted.parent.render.append(tasksContainer);
 }
 
 function taskSubmittedError(inputNode) {
-    console.log('taskError');
-    console.log(inputNode);
+
     inputNode.classList.toggle('error')
 }
 
