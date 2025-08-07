@@ -15,18 +15,19 @@ export default class Project {
             this[key] = props[key];
         }
 
-        let test = new Task('user','title',props);
-        let test2 = new Task('user2','title2',props);
-        let test3 = new Task('user3','title3',props);
-        this.tasks.push(test, test2, test3);
+        // let test = new Task('user','title',props);
+        // let test2 = new Task('user2','title2',props);
+        // let test3 = new Task('user3','title3',props);
+        // this.tasks.push(test, test2, test3);
     }
 
     setRender(render) {
         this.render = render;
     }
 
-    createTask(user, title, props) {
-        let task = new Task(user, title, props);
+    createTask(user, title, parent, props) {
+        console.log(this);
+        let task = new Task(user, title, this, props);
 
         this.tasks.push(task);
 

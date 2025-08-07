@@ -1,9 +1,10 @@
 import { events } from './events';
 
 export default class Task {
-    constructor(user, title, props) {
+    constructor(user, title, parent, props) {
         this.user = user;
         this.title = title;
+        this.parent = parent;
 
         // this.date;
         // this.description;
@@ -11,13 +12,14 @@ export default class Task {
 
         this.details = {};
         for (let key in props) {
-            this.details[key] = props[key];
+            if (!((key === 'user') || (key === 'title'))) {
+                this.details[key] = props[key];
+            }
         }
     }
 
     setRender(render, parentRender) {
         this.render = render;
-        this.renderParent = parentRender;
     }
 
     // function createSubTask(props) {
@@ -48,11 +50,7 @@ export default class Task {
         }
     }
 
-    setParent(parentNew) {
+    setRenderParent(parentNew) {
         this.renderParent = parentNew;
-    }
-
-    getParent() {
-        return this.renderParent;
     }
 }

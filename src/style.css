@@ -168,3 +168,7 @@ body {
     justify-content: space-between;
     align-items: stretch;
 }
+
+#content > .project > .createTaskContainer > div > input.error {
+    border: 1px solid red;
+}
