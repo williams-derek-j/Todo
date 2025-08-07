@@ -1,10 +1,11 @@
 import clear from "./clear.js";
 import css from "./css.js";
+import makeID from "./makeID.js";
 import { events } from "./events.js";
 import { taskProperties } from "./taskProperties.js";
 
-// I don't want the functions in this file to call each other, could get confusing -- unless the functions are separated for readability, e.g., renderAllTasks
-// Instead, just emit an event and let index.js come back here to call the appropriate render function
+// functions here should only call each other in one direction, i.e., like they're called in index.js, so all can be exported and used individually if needed without re-rendering whole content/sidebar divs
+// emit events and let index.js come back here to call the appropriate render function
 
 // Also don't want to generate backend data here, i.e., don't want to call User, Task, Project classes here instead of in index.js (or in the classes themselves, e.g., Project creates a new Task)
 
@@ -50,8 +51,10 @@ function renderCreateTask(project) {
 
                 data[`${input.className}`.toLowerCase()] = input.value;
             } else {
-                input.classList.toggle('error')
-                //events.emit('taskSubmittedError', input);
+                if (!input.className.includes('error')) {
+                    input.classList.toggle('error')
+                }
+
                 valid = false;
             }
         })
@@ -71,7 +74,7 @@ function renderCreateTask(project) {
     //return(createTaskContainer);
 }
 
-function renderCreateProject() {
+function renderCreateProject(container) {
     const createProjectContainer = document.createElement("div");
     createProjectContainer.classList.add('createProjectContainer');
 
@@ -111,10 +114,17 @@ function renderCreateProject() {
     })
     createProjectContainer.append(buttonSubmit);
 
-    return(createProjectContainer);
+    container.append(createProjectContainer);
+    //return(createProjectContainer);
 }
 
 export function renderNav(projects, live) {
+    const togglesOld = Array.from(sidebar.querySelectorAll('input')).filter((node) => {
+        return node.type === 'checkbox';
+    })
+    const togglesOldOff = togglesOld.filter((toggle) => {
+        return toggle.checked === false;
+    })
     clear(sidebar);
 
     const projectsContainer = document.createElement("div");
@@ -128,11 +138,31 @@ export function renderNav(projects, live) {
         toggle.checked = 'checked';
         toggle.name = `${project.title}`;
         toggle.project = project;
+
+        let test;
+        togglesOldOff.forEach((oldOff) => {
+            if (toggle.project.ID === oldOff.project.ID) {
+                toggle.checked = false;
+
+                console.log('oldsVV')
+                console.log(live);
+                // live = live.filter((alive) => {
+                //     return alive !== toggle.project;
+                // })
+                console.log(live);
+                console.log('olds^^')
+            }
+        })
+
         toggle.addEventListener('change',(event) => {
             if (!toggle.checked) { // this could just remove the project node from the content container rather than returning modified live array, but the else statement would have to include logic for rendering a new project and splicing it in correct position, requiring renderProject
+                console.log('changeVV')
+                console.log(live);
                 live = live.filter((alive) => {
                     return alive !== toggle.project;
                 })
+                console.log(live);
+                console.log('change^^^')
             } else {
                 //live.push(toggle.project);
                 live.splice(project.index, 0, project); // live will get re-rendered when event is emitted, bc index.js is listening and will call screen
@@ -154,13 +184,12 @@ export function renderNav(projects, live) {
     })
     sidebar.appendChild(projectsContainer);
 
-    const createProject = renderCreateProject();
-    sidebar.appendChild(createProject);
+    renderCreateProject(sidebar);
 
     return(live);
 }
 
-function renderTask(task, tasksContainer) {
+export function renderTask(task, tasksContainer) {
     const taskRender = document.createElement('div');
     taskRender.classList.add('task');
     task.setRender(taskRender);
@@ -172,6 +201,7 @@ function renderTask(task, tasksContainer) {
     buttonDel.textContent = "X";
     buttonDel.addEventListener('click',(event) => {
         const deleted = event.target.closest('.task');
+
         deleted.parentNode.removeChild(deleted);
 
         // const emitted = {}
@@ -217,7 +247,7 @@ function renderTask(task, tasksContainer) {
                         })
                         const emitted = {}
                         emitted['task'] = task;
-                        emitted['taskRender'] = edited;
+                        emitted['detailRender'] = edited;
 
                         events.emit('taskEdited', emitted);
                         //task.editDetail(edited) -- emit instead to keep this cleaner, i.e., don't edit backend from file meant to control frontend
@@ -239,26 +269,25 @@ function renderTask(task, tasksContainer) {
 }
 
 export function renderAllTasks(project) {
-    const projectRender = project.render;
-    const previousTasks = projectRender.querySelector('.tasksContainer');
-    clear(projectRender.getElementsByClassName('tasksContainer'))
+    const tasksContainerOld = project.render.querySelector('.tasksContainer');
+    clear(project.render.getElementsByClassName('tasksContainer'))
 
-    const tasksContainer = document.createElement('div');
-    tasksContainer.classList.add('tasksContainer');
+    const tasksContainerNew = document.createElement('div');
+    tasksContainerNew.classList.add('tasksContainer');
 
     const tasks = project.getAllTasks();
     tasks.forEach((task) => {
 
-        renderTask(task, tasksContainer);
+        renderTask(task, tasksContainerNew);
         // const taskRender = renderTask(task);
         //
         // tasksContainer.append(taskRender);
     })
 
-    if (previousTasks) {
-        previousTasks.replaceWith(tasksContainer);
+    if (tasksContainerOld) {
+        tasksContainerOld.replaceWith(tasksContainerNew);
     } else {
-        project.render.appendChild(tasksContainer);
+        project.render.appendChild(tasksContainerNew);
     }
     //return(tasksContainer);
 }

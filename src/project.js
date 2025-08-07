@@ -1,4 +1,5 @@
 import Task from './task.js';
+import makeID from './makeID.js';
 
 export default class Project {
     constructor(user, title, props) {
@@ -9,6 +10,8 @@ export default class Project {
         this.description;
         this.priority;
         this.index;
+
+        this.ID = makeID(12);
 
         this.tasks = [];
         for (let key in props) {
@@ -25,7 +28,7 @@ export default class Project {
         this.render = render;
     }
 
-    createTask(user, title, parent, props) {
+    createTask(user, title, props) {
         let task = new Task(user, title, this, props);
 
         this.tasks.push(task);

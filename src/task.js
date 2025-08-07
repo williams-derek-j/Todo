@@ -6,6 +6,7 @@ export default class Task {
         this.title = title;
         this.parent = parent;
 
+        this.index;
         // this.date;
         // this.description;
         // this.priority;
