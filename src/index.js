@@ -40,9 +40,23 @@ function projectSubmitted(data) {
     renderNav(projects, live);
 }
 
-function projectToggled(updated) { // project toggle (checkbox) has listener that calls function to add or remove said project from array of displayed projects, returns modified array
-    live = updated;
-    refreshProjects(updated);
+function projectToggledOn(project) {
+    live.splice(project.index, 0, project);
+    live.sort((
+        function(a, b) {
+            if (a.index > b.index) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+    ))
+}
+
+function projectToggledOff(project) {
+    live = live.filter((alive) => {
+        return alive !== project;
+    })
 }
 
 function projectDeleted(deleted) {
@@ -60,5 +74,6 @@ events.on('taskSubmitted', taskSubmitted);
 events.on('taskDeleted', taskDeleted);
 events.on('taskEdited', taskEdited);
 events.on('projectSubmitted', projectSubmitted);
-events.on('projectToggled', projectToggled);
+events.on('projectToggledOn', projectToggledOn);
+events.on('projecToggledOff', projectToggledOff);
 events.on('projectDeleted', projectDeleted);

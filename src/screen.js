@@ -60,7 +60,6 @@ function renderCreateTask(project) {
         })
 
         if (valid) {
-            console.log('taskEmitted');
             const emitted = {};
             emitted['parent'] = project;
             emitted['data'] = data;
@@ -135,40 +134,28 @@ export function renderNav(projects, live) {
 
         let toggle = document.createElement('input')
         toggle.type = 'checkbox';
-        toggle.checked = 'checked';
+        toggle.checked = true;
         toggle.name = `${project.title}`;
         toggle.project = project;
 
-        let test;
         togglesOldOff.forEach((oldOff) => {
             if (toggle.project.ID === oldOff.project.ID) {
                 toggle.checked = false;
-
-                console.log('oldsVV')
-                console.log(live);
-                // live = live.filter((alive) => {
-                //     return alive !== toggle.project;
-                // })
-                console.log(live);
-                console.log('olds^^')
             }
         })
 
         toggle.addEventListener('change',(event) => {
-            if (!toggle.checked) { // this could just remove the project node from the content container rather than returning modified live array, but the else statement would have to include logic for rendering a new project and splicing it in correct position, requiring renderProject
-                console.log('changeVV')
-                console.log(live);
-                live = live.filter((alive) => {
-                    return alive !== toggle.project;
-                })
-                console.log(live);
-                console.log('change^^^')
+            if (!toggle.checked) {
+                project.render.remove();
+
+                events.emit('projectToggledOff', project);
             } else {
-                //live.push(toggle.project);
-                live.splice(project.index, 0, project); // live will get re-rendered when event is emitted, bc index.js is listening and will call screen
+                events.emit('projectToggledOn', project)
+
+                renderProject(project, live); // needs to come after event so live can update and renderProject can use live to correctly position new render
             }
             //render(live);
-            events.emit('projectToggled', live);
+            //events.emit('projectToggled', live);
         })
 
         let label = document.createElement('label');
@@ -292,16 +279,28 @@ export function renderAllTasks(project) {
     //return(tasksContainer);
 }
 
-export function renderProject(project) {
+export function renderProject(project, live) {
     let reRender = false;
     let nextRender;
 
     if (project.render) {
-        nextRender = project.render.parentNode.children[Number(project.index) + 1];
+        if (project.render.parentNode) {
+            nextRender = project.render.parentNode.children[Number(project.index) + 1];
 
-        project.render.remove();
+            project.render.remove();
 
-        reRender = true;
+            reRender = true;
+        } else { // for projects that were toggled back on
+            for (let i = 0; i < live.length; i++) {
+                if (live[i] === project) {
+                    if (live[i + 1]) {
+                        nextRender = live[i + 1].render;
+
+                        reRender = true;
+                    }
+                }
+            }
+        }
     }
 
     const projectRender = document.createElement('div');
