@@ -22,8 +22,7 @@ export default class Task {
     toJSONString() {
         const nonCircular = this;
 
-        //console.log(this.parent);
-        nonCircular.parent = null; //JSON.stringify(this.parent.toJSONString());
+        nonCircular.parent = null;
 
         return JSON.stringify(nonCircular);
     }

@@ -41,6 +41,7 @@ function projectSubmitted(data) {
 
     projects.push(created);
     live.push(created);
+    console.log(projects, live);
 
     renderProject(created);
     renderNav(projects, live);

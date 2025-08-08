@@ -140,7 +140,7 @@ export function renderNav(projects, live) {
         toggle.project = project;
 
         togglesOldOff.forEach((oldOff) => {
-            if (toggle.project.ID === oldOff.project.ID) { // check if i dont need ID
+            if (toggle.project === oldOff.project) { // check if i dont need ID
                 toggle.checked = false;
             }
         })
