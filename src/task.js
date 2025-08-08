@@ -26,16 +26,9 @@ export default class Task {
             if (key !== 'parent' && key !== 'render' && key !== 'details') {
                 nonCircular[key] = `${this[key]}`;
             } else if (key === 'details') {
-                console.log(this.details);
                 nonCircular['details'] = JSON.stringify(this['details']);
             }
         }
-        // console.log('nonCirc VV')
-        // console.log(nonCircular);
-        // console.log('nonCirc &&&');
-
-        // nonCircular = this;
-        // nonCircular.parent = null;
 
         return JSON.stringify(nonCircular);
     }
@@ -75,7 +68,6 @@ export default class Task {
         for (let key in this.details) {
             if (key === detailEdited.className) {
                 this.details[key] = detailEdited.firstChild.textContent;
-                //console.log(this.details[key]);
             }
         }
     }

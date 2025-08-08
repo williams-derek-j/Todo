@@ -36,7 +36,7 @@ export default class Project {
         this.render = render;
     }
 
-    createTask(user, title, parent, props) {
+    createTask(user, title, props) {
         let task = new Task(user, title, this, props);
 
         this.tasks.push(task);
