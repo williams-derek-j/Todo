@@ -1,6 +1,5 @@
 import clear from "./clear.js";
 import css from "./css.js";
-import makeID from "./makeID.js";
 import { events } from "./events.js";
 import { taskProperties } from "./taskProperties.js";
 import { taskMethods } from "./taskMethods.js";
@@ -35,9 +34,6 @@ function renderCreateTask(project, container) { // container is project
 
     const buttonSubmit = document.createElement('button');
     buttonSubmit.textContent = "Submit";
-    // css(buttonSubmit, {
-    //     'align-self': 'stretch',
-    // })
     buttonSubmit.addEventListener('click', (event) => {
         const data = {}
 
@@ -99,9 +95,6 @@ function renderCreateProject(container) {
 
     const buttonSubmit = document.createElement('button');
     buttonSubmit.textContent = "Submit";
-    // css(buttonSubmit, {
-    //     'align-self': 'stretch',
-    // })
     buttonSubmit.addEventListener('click', (event) => {
         const data = {}
 
@@ -155,16 +148,11 @@ export function renderNav(projects, live) {
 
                 renderProject(project, live); // needs to come after event so live can update and renderProject can use live to correctly position new render
             }
-            //render(live);
-            //events.emit('projectToggled', live);
         })
 
         let label = document.createElement('label');
         label.textContent = `${project.title}`;
         label.htmlFor = `${project.title}`;
-        // css(label, {
-        //     'htmlFor': `${project.title}`,
-        // })
         toggleContainer.append(label);
 
         toggleContainer.append(toggle);
@@ -249,12 +237,11 @@ export function renderTask(task, tasksContainer) {
     taskRender.append(miniContainer);
 
     taskRender.addEventListener('dragstart', (event) => {
-        const taskNonCircular = task.toJSONString();
-        console.log('taskNCVV');
-        console.log(taskNonCircular);
-        console.log('taskNC***');
+
+        let taskNonCircular = task.toJSONString();
+
+        event.dataTransfer.clearData('text');
         event.dataTransfer.setData('text', `${taskNonCircular}`)
-        //event.dataTransfer.setData('text/html', taskRender.outerHTML);
     })
 
     tasksContainer.append(taskRender);
@@ -311,9 +298,6 @@ export function renderProject(project, live) {
 
     const buttonDel = document.createElement('button');
     buttonDel.textContent = "X";
-    // css(buttonDel, {
-    //     'align-self': 'flex-end'
-    // })
     buttonDel.addEventListener('click',(event) => {
         const confirmed = confirm('Are you sure?')
 
@@ -337,27 +321,27 @@ export function renderProject(project, live) {
     projectRender.addEventListener('drop', (event) => {
         event.preventDefault();
 
-        //const taskRenderHTML = event.dataTransfer.getData('text/html');
-        //console.log(taskRenderHTML);
-        //console.log(typeof taskRenderHTML);
-
-        const task = JSON.parse(event.dataTransfer.getData('text'));
+        let dropped = JSON.parse(event.dataTransfer.getData('text'));
+        console.log(dropped);
+        console.log(dropped.details);
+        dropped.details = JSON.parse(dropped.details);
+        console.log(dropped.details);
+        //event.dataTransfer.clearData('text');
 
         for (let key in taskMethods) {
-            task[`${key}`] = taskMethods[key];
+            dropped[`${key}`] = taskMethods[key];
         }
-        console.log(task);
-        task.setParent(project);
-        // task.parent = JSON.parse(task.parent);
-        // task.parent.tasks = JSON.parse(task.parent.tasks);
+        dropped.setParent(project);
+        dropped.parent = (project);
+        console.log('droppedV')
+        console.log(dropped);
+        console.log('dropped^')
 
-        const emitted = {
-            //taskRenderHTML: taskRenderHTML,
-            task: task,
+        let emitted = {
+            task: dropped,
             targetObj: project,
         }
         events.emit('taskTransferred', emitted);
-        //renderTask(data, project.querySelector('.tasksContainer'));
     })
 
     if (reRender) {

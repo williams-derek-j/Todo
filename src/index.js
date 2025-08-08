@@ -1,8 +1,8 @@
 import "./style.css";
-import { events } from "./events";
 import User from "./user.js"
 import Project from "./project.js";
-import { renderProject, renderNav, renderTask, refreshProjects } from "./screen.js";
+import { events } from "./events";
+import { renderNav, renderProject, renderTask, renderAllTasks, refreshProjects } from "./screen.js";
 
 const user = new User("user");
 
@@ -12,17 +12,21 @@ let live = [];
 renderNav(projects);
 
 function taskSubmitted(emitted) {
-    const task = emitted.parentObj.createTask(emitted.data.user, emitted.data.title, emitted.data);
+    const task = emitted.parentObj.createTask(emitted.data.user, emitted.data.title, emitted.parentObj, emitted.data);
+    console.log('submitted VVV');
+    console.log(task);
+    console.log('submitted ^^^^');
 
     renderTask(task, task.parent.render.querySelector('.tasksContainer'))
-    //renderAllTasks(emitted.parent);
-    // const tasksContainer = renderAllTasks(emitted.parent)
-    // emitted.parent.render.append(tasksContainer);
 }
 
 function taskDeleted(task) {
+
+    console.log("taskDeleted");
+    console.log(task);
+    console.log(task.parent);
+    console.log(task.getParent());
     task.parent.deleteTask(task);
-    //emitted.project.deleteTask(emitted.task)
 }
 
 function taskEdited(emitted) {
@@ -30,9 +34,15 @@ function taskEdited(emitted) {
 }
 
 function taskTransferred(emitted) {
-    emitted.targetObj.addTask(emitted.task);
+    //emitted.task.setParent(emitted.targetObj);
+    console.log('transfered VVV');
+    console.log(emitted.task);
+    let created = emitted.targetObj.createTask(emitted.task.user, emitted.task.title, emitted.task.parent, emitted.task.getDetails());
+    console.log(emitted.task);
+    console.log('transferred ^^^^');
 
-    renderTask(emitted.task, emitted.targetObj.render.querySelector('.tasksContainer'));
+    //renderAllTasks(emitted.targetObj, emitted.targetObj.render.querySelector('.tasksContainer'));
+    renderTask(created, emitted.targetObj.render.querySelector('.tasksContainer'));
 }
 
 function projectSubmitted(data) {
@@ -41,7 +51,6 @@ function projectSubmitted(data) {
 
     projects.push(created);
     live.push(created);
-    console.log(projects, live);
 
     renderProject(created);
     renderNav(projects, live);

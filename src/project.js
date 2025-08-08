@@ -24,19 +24,19 @@ export default class Project {
         // this.tasks.push(test, test2, test3);
     }
 
-    toJSONString() {
-        const nonCircular = this;
-
-        nonCircular.tasks = JSON.stringify(this.tasks)
-
-        return nonCircular;
-    }
+    // toJSONString() {
+    //     const nonCircular = this;
+    //
+    //     nonCircular.tasks = JSON.stringify(this.tasks)
+    //
+    //     return nonCircular;
+    // }
 
     setRender(render) {
         this.render = render;
     }
 
-    createTask(user, title, props) {
+    createTask(user, title, parent, props) {
         let task = new Task(user, title, this, props);
 
         this.tasks.push(task);
@@ -51,6 +51,7 @@ export default class Project {
     }
 
     addTask(task) {
+        task.parent = this;
         this.tasks.push(task);
     }
 

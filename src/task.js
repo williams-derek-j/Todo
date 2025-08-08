@@ -13,22 +13,39 @@ export default class Task {
 
         this.details = {};
         for (let key in props) {
-            if (!((key === 'user') || (key === 'title'))) {
+            if (!((key === 'user') || (key === 'title') || (key === 'parent'))) {
                 this.details[key] = props[key];
             }
         }
     }
 
     toJSONString() {
-        const nonCircular = this;
+        let nonCircular = {};
 
-        nonCircular.parent = null;
+        for (let key in this) {
+            if (key !== 'parent' && key !== 'render' && key !== 'details') {
+                nonCircular[key] = `${this[key]}`;
+            } else if (key === 'details') {
+                console.log(this.details);
+                nonCircular['details'] = JSON.stringify(this['details']);
+            }
+        }
+        // console.log('nonCirc VV')
+        // console.log(nonCircular);
+        // console.log('nonCirc &&&');
+
+        // nonCircular = this;
+        // nonCircular.parent = null;
 
         return JSON.stringify(nonCircular);
     }
 
     setParent(parentNew) {
         this.parent = parentNew;
+    }
+
+    getParent() {
+        return this.parent;
     }
 
     setRender(render, parentRender) {
@@ -44,14 +61,14 @@ export default class Task {
     // }
 
     getDetails() {
-        let details = {};
+        let detailsFiltered = {};
 
         for (let key in this.details) {
             if (typeof this.details[key] !== 'object') {
-                details[key] = this.details[key];
+                detailsFiltered[key] = this.details[key];
             }
         }
-        return (details);
+        return (detailsFiltered);
     }
 
     editDetail(detailEdited) {
