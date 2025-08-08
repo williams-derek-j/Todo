@@ -3,6 +3,7 @@ import css from "./css.js";
 import makeID from "./makeID.js";
 import { events } from "./events.js";
 import { taskProperties } from "./taskProperties.js";
+import { taskMethods } from "./taskMethods.js";
 
 // functions here should only call each other in one direction, i.e., like they're called in index.js, so all can be exported and used individually if needed without re-rendering whole content/sidebar divs
 // emit events and let index.js come back here to call the appropriate render function
@@ -12,14 +13,12 @@ import { taskProperties } from "./taskProperties.js";
 const content = document.querySelector('#content');
 const sidebar = document.querySelector('#sidebar');
 
-function renderCreateTask(project) {
-    const projectRender = project.render;
-
+function renderCreateTask(project, container) { // container is project
     const createTaskContainer = document.createElement('div');
     createTaskContainer.classList.add('createTaskContainer');
 
     taskProperties.forEach((property) => {
-        const container = document.createElement('div');
+        const propContainer = document.createElement('div');
 
         const label = document.createElement('label');
         label.setAttribute('for', 'prop');
@@ -27,29 +26,31 @@ function renderCreateTask(project) {
 
         const prop = document.createElement(`input`);
         prop.setAttribute('type', 'text');
+        prop.classList.add('createTask');
         prop.classList.add(`${property}`.toLowerCase());
 
-        container.append(label, prop);
-        createTaskContainer.append(container);
+        propContainer.append(label, prop);
+        createTaskContainer.append(propContainer);
     })
 
     const buttonSubmit = document.createElement('button');
     buttonSubmit.textContent = "Submit";
-    css(buttonSubmit, {
-        'align-self': 'stretch',
-    })
+    // css(buttonSubmit, {
+    //     'align-self': 'stretch',
+    // })
     buttonSubmit.addEventListener('click', (event) => {
         const data = {}
 
         let valid = true;
-        const inputs = projectRender.querySelectorAll('input');
+        const inputs = container.querySelectorAll('input.createTask');
         inputs.forEach((input) => {
             if (input.value !== "") {
                 if (input.className.includes('error')) {
                     input.classList.toggle('error');
                 }
 
-                data[`${input.className}`.toLowerCase()] = input.value;
+                const inputClassNameTaskProperty = input.className.replace('createTask ', '');
+                data[`${inputClassNameTaskProperty}`.toLowerCase()] = input.value;
             } else {
                 if (!input.className.includes('error')) {
                     input.classList.toggle('error')
@@ -61,7 +62,7 @@ function renderCreateTask(project) {
 
         if (valid) {
             const emitted = {};
-            emitted['parent'] = project;
+            emitted['parentObj'] = project;
             emitted['data'] = data;
 
             events.emit('taskSubmitted', emitted);
@@ -69,7 +70,7 @@ function renderCreateTask(project) {
     })
     createTaskContainer.append(buttonSubmit);
 
-    project.render.appendChild(createTaskContainer);
+    container.appendChild(createTaskContainer);
     //return(createTaskContainer);
 }
 
@@ -82,29 +83,29 @@ function renderCreateProject(container) {
     createProjectContainer.append(header);
 
     taskProperties.forEach((property) => {
-        const container = document.createElement('div');
+        const detailInputContainer = document.createElement('div');
 
         const label = document.createElement('label');
-        label.setAttribute('for', 'prop');
+        label.setAttribute('for', 'detailInput');
         label.textContent = `${property}:`.toUpperCase();
 
-        const prop = document.createElement(`input`);
-        prop.setAttribute('type', 'text');
-        prop.classList.add(`${property}`.toUpperCase());
+        const detailInput = document.createElement(`input`);
+        detailInput.setAttribute('type', 'text');
+        detailInput.classList.add(`${property}`.toUpperCase());
 
-        container.append(label, prop);
-        createProjectContainer.append(container);
+        detailInputContainer.append(label, detailInput);
+        createProjectContainer.append(detailInputContainer);
     })
 
     const buttonSubmit = document.createElement('button');
     buttonSubmit.textContent = "Submit";
-    css(buttonSubmit, {
-        'align-self': 'stretch',
-    })
+    // css(buttonSubmit, {
+    //     'align-self': 'stretch',
+    // })
     buttonSubmit.addEventListener('click', (event) => {
         const data = {}
 
-        const inputs = sidebar.querySelector('.createProjectContainer').querySelectorAll('input');
+        const inputs = container.querySelector('.createProjectContainer').querySelectorAll('input');
         inputs.forEach((input) => {
             data[`${input.className}`.toLowerCase()] = input.value;
         })
@@ -139,7 +140,7 @@ export function renderNav(projects, live) {
         toggle.project = project;
 
         togglesOldOff.forEach((oldOff) => {
-            if (toggle.project.ID === oldOff.project.ID) {
+            if (toggle.project.ID === oldOff.project.ID) { // check if i dont need ID
                 toggle.checked = false;
             }
         })
@@ -160,9 +161,10 @@ export function renderNav(projects, live) {
 
         let label = document.createElement('label');
         label.textContent = `${project.title}`;
-        css(label, {
-            'htmlFor': `${project.title}`,
-        })
+        label.htmlFor = `${project.title}`;
+        // css(label, {
+        //     'htmlFor': `${project.title}`,
+        // })
         toggleContainer.append(label);
 
         toggleContainer.append(toggle);
@@ -172,13 +174,12 @@ export function renderNav(projects, live) {
     sidebar.appendChild(projectsContainer);
 
     renderCreateProject(sidebar);
-
-    return(live);
 }
 
 export function renderTask(task, tasksContainer) {
     const taskRender = document.createElement('div');
     taskRender.classList.add('task');
+    taskRender.setAttribute('draggable', 'true');
     task.setRender(taskRender);
 
     const miniContainer = document.createElement('div');
@@ -190,10 +191,6 @@ export function renderTask(task, tasksContainer) {
         const deleted = event.target.closest('.task');
 
         deleted.parentNode.removeChild(deleted);
-
-        // const emitted = {}
-        // emitted['project'] = project;
-        // emitted['task'] = task;
 
         events.emit('taskDeleted', task);
     })
@@ -251,13 +248,22 @@ export function renderTask(task, tasksContainer) {
     miniContainer.append(buttonExpand);
     taskRender.append(miniContainer);
 
+    taskRender.addEventListener('dragstart', (event) => {
+        const taskNonCircular = task.toJSONString();
+        console.log('taskNCVV');
+        console.log(taskNonCircular);
+        console.log('taskNC***');
+        event.dataTransfer.setData('text', `${taskNonCircular}`)
+        //event.dataTransfer.setData('text/html', taskRender.outerHTML);
+    })
+
     tasksContainer.append(taskRender);
     // return(taskRender);
 }
 
-export function renderAllTasks(project) {
-    const tasksContainerOld = project.render.querySelector('.tasksContainer');
-    clear(project.render.getElementsByClassName('tasksContainer'))
+export function renderAllTasks(project, container) {
+    const tasksContainerOld = container.querySelector('.tasksContainer');
+    clear(container.getElementsByClassName('tasksContainer'))
 
     const tasksContainerNew = document.createElement('div');
     tasksContainerNew.classList.add('tasksContainer');
@@ -266,17 +272,13 @@ export function renderAllTasks(project) {
     tasks.forEach((task) => {
 
         renderTask(task, tasksContainerNew);
-        // const taskRender = renderTask(task);
-        //
-        // tasksContainer.append(taskRender);
     })
 
     if (tasksContainerOld) {
         tasksContainerOld.replaceWith(tasksContainerNew);
     } else {
-        project.render.appendChild(tasksContainerNew);
+        container.appendChild(tasksContainerNew);
     }
-    //return(tasksContainer);
 }
 
 export function renderProject(project, live) {
@@ -309,9 +311,9 @@ export function renderProject(project, live) {
 
     const buttonDel = document.createElement('button');
     buttonDel.textContent = "X";
-    css(buttonDel, {
-        'align-self': 'flex-end'
-    })
+    // css(buttonDel, {
+    //     'align-self': 'flex-end'
+    // })
     buttonDel.addEventListener('click',(event) => {
         const confirmed = confirm('Are you sure?')
 
@@ -324,18 +326,44 @@ export function renderProject(project, live) {
     })
     projectRender.appendChild(buttonDel);
 
-    renderAllTasks(project);
-    // const tasksContainer = renderAllTasks(project);
-    // projectRender.appendChild(tasksContainer);
+    renderAllTasks(project, projectRender);
 
-    renderCreateTask(project);
-    // const createTaskRender = renderCreateTask(project);
-    // projectRender.appendChild(createTaskRender);
+    renderCreateTask(project, projectRender);
+
+    projectRender.addEventListener('dragover', (event) => {
+        event.preventDefault();
+    })
+
+    projectRender.addEventListener('drop', (event) => {
+        event.preventDefault();
+
+        //const taskRenderHTML = event.dataTransfer.getData('text/html');
+        //console.log(taskRenderHTML);
+        //console.log(typeof taskRenderHTML);
+
+        const task = JSON.parse(event.dataTransfer.getData('text'));
+
+        for (let key in taskMethods) {
+            task[`${key}`] = taskMethods[key];
+        }
+        console.log(task);
+        task.setParent(project);
+        // task.parent = JSON.parse(task.parent);
+        // task.parent.tasks = JSON.parse(task.parent.tasks);
+
+        const emitted = {
+            //taskRenderHTML: taskRenderHTML,
+            task: task,
+            targetObj: project,
+        }
+        events.emit('taskTransferred', emitted);
+        //renderTask(data, project.querySelector('.tasksContainer'));
+    })
 
     if (reRender) {
-        document.querySelector('#content').insertBefore(projectRender, nextRender);
+        content.insertBefore(projectRender, nextRender);
     } else {
-        document.querySelector('#content').appendChild(projectRender);
+        content.appendChild(projectRender);
     }
 }
 
@@ -348,38 +376,40 @@ export function renderAllProjects(projects) {
 export function refreshProjects(projects) {
     clear(content);
 
-    projects.forEach((project) => {
-        //renderProject(project); -- doesn't work, needs to have parentNode
+    renderAllProjects(projects);
 
-        const projectRender = document.createElement('div');
-        projectRender.classList.add('project');
-        project.setRender(projectRender);
-
-        const buttonDel = document.createElement('button');
-        buttonDel.textContent = "X";
-        css(buttonDel, {
-            'align-self': 'flex-end'
-        })
-        buttonDel.addEventListener('click',(event) => {
-            const confirmed = confirm('Are you sure?')
-
-            if (confirmed) {
-                const deleted = event.target.closest('.project');
-                deleted.parentNode.removeChild(deleted);
-
-                events.emit('projectDeleted', project);
-            }
-        })
-        projectRender.appendChild(buttonDel);
-
-        renderAllTasks(project);
-        // const tasksContainer = renderAllTasks(project);
-        // projectRender.appendChild(tasksContainer);
-
-        renderCreateTask(project);
-        // const createTaskRender = renderCreateTask(project);
-        // projectRender.appendChild(createTaskRender);
-
-        document.querySelector('#content').appendChild(projectRender);
-    });
+    // projects.forEach((project) => {
+    //     //renderProject(project); -- doesn't work, needs to have parentNode
+    //
+    //     const projectRender = document.createElement('div');
+    //     projectRender.classList.add('project');
+    //     project.setRender(projectRender);
+    //
+    //     const buttonDel = document.createElement('button');
+    //     buttonDel.textContent = "X";
+    //     css(buttonDel, {
+    //         'align-self': 'flex-end'
+    //     })
+    //     buttonDel.addEventListener('click',(event) => {
+    //         const confirmed = confirm('Are you sure?')
+    //
+    //         if (confirmed) {
+    //             const deleted = event.target.closest('.project');
+    //             deleted.parentNode.removeChild(deleted);
+    //
+    //             events.emit('projectDeleted', project);
+    //         }
+    //     })
+    //     projectRender.appendChild(buttonDel);
+    //
+    //     renderAllTasks(project);
+    //     // const tasksContainer = renderAllTasks(project);
+    //     // projectRender.appendChild(tasksContainer);
+    //
+    //     renderCreateTask(project);
+    //     // const createTaskRender = renderCreateTask(project);
+    //     // projectRender.appendChild(createTaskRender);
+    //
+    //     document.querySelector('#content').appendChild(projectRender);
+    // });
 }

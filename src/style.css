@@ -63,6 +63,10 @@ body {
     margin-bottom: 2%
 }
 
+#sidebar > .createProjectContainer > button {
+    align-self: stretch;
+}
+
 #sidebar > .createProjectContainer > div > input {
     max-width: 95%;
 }
@@ -93,6 +97,10 @@ body {
     background-color: antiquewhite;
     margin: 1%;
     padding: 1%;
+}
+
+#content > .project > button {
+    align-self: flex-end;
 }
 
 #content > .project > .tasksContainer {
@@ -171,4 +179,8 @@ body {
 
 #content > .project > .createTaskContainer > div > input.error {
     border: 1px solid red;
+}
+
+#content > .project > .createTaskContainer > div > button {
+    align-self: stretch;
 }

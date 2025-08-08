@@ -11,7 +11,7 @@ export default class Project {
         this.priority;
         this.index;
 
-        this.ID = makeID(12);
+        //this.ID = makeID(12);
 
         this.tasks = [];
         for (let key in props) {
@@ -22,6 +22,14 @@ export default class Project {
         // let test2 = new Task('user2','title2',props);
         // let test3 = new Task('user3','title3',props);
         // this.tasks.push(test, test2, test3);
+    }
+
+    toJSONString() {
+        const nonCircular = this;
+
+        nonCircular.tasks = JSON.stringify(this.tasks)
+
+        return nonCircular;
     }
 
     setRender(render) {
@@ -40,6 +48,10 @@ export default class Project {
         this.tasks = this.tasks.filter((task) => {
             return task !== deleted;
         })
+    }
+
+    addTask(task) {
+        this.tasks.push(task);
     }
 
     getAllTasks() {

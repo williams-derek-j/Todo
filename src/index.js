@@ -2,17 +2,17 @@ import "./style.css";
 import { events } from "./events";
 import User from "./user.js"
 import Project from "./project.js";
-import { renderProject, renderNav, refreshProjects, renderTask, renderAllTasks } from "./screen.js";
+import { renderProject, renderNav, renderTask, refreshProjects } from "./screen.js";
 
 const user = new User("user");
 
 let projects = [];
 let live = [];
 
-live = renderNav(projects, live);
+renderNav(projects);
 
 function taskSubmitted(emitted) {
-    const task = emitted.parent.createTask(emitted.data.user, emitted.data.title, emitted.data);
+    const task = emitted.parentObj.createTask(emitted.data.user, emitted.data.title, emitted.data);
 
     renderTask(task, task.parent.render.querySelector('.tasksContainer'))
     //renderAllTasks(emitted.parent);
@@ -27,6 +27,12 @@ function taskDeleted(task) {
 
 function taskEdited(emitted) {
     emitted.task.editDetail(emitted.detailRender);
+}
+
+function taskTransferred(emitted) {
+    emitted.targetObj.addTask(emitted.task);
+
+    renderTask(emitted.task, emitted.targetObj.render.querySelector('.tasksContainer'));
 }
 
 function projectSubmitted(data) {
@@ -73,7 +79,8 @@ function projectDeleted(deleted) {
 events.on('taskSubmitted', taskSubmitted);
 events.on('taskDeleted', taskDeleted);
 events.on('taskEdited', taskEdited);
+events.on('taskTransferred', taskTransferred);
 events.on('projectSubmitted', projectSubmitted);
 events.on('projectToggledOn', projectToggledOn);
-events.on('projecToggledOff', projectToggledOff);
+events.on('projectToggledOff', projectToggledOff);
 events.on('projectDeleted', projectDeleted);
