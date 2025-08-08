@@ -11,17 +11,10 @@ export default class Project {
         this.priority;
         this.index;
 
-        //this.ID = makeID(12);
-
         this.tasks = [];
         for (let key in props) {
             this[key] = props[key];
         }
-
-        // let test = new Task('user','title',props);
-        // let test2 = new Task('user2','title2',props);
-        // let test3 = new Task('user3','title3',props);
-        // this.tasks.push(test, test2, test3);
     }
 
     // toJSONString() {
@@ -51,16 +44,7 @@ export default class Project {
         })
     }
 
-    addTask(task) {
-        task.parent = this;
-        this.tasks.push(task);
-    }
-
     getAllTasks() {
         return this.tasks;
-    }
-
-    getTask(task) {
-        return this.tasks[task];
     }
 }
