@@ -44,18 +44,16 @@ function renderCreateTask(project, container) { // container is project
                 if (input.className.includes('error')) {
                     input.classList.toggle('error');
                 }
-
                 const inputClassNameTaskProperty = input.className.replace('createTask ', '');
                 data[`${inputClassNameTaskProperty}`.toLowerCase()] = input.value;
+
             } else {
                 if (!input.className.includes('error')) {
                     input.classList.toggle('error')
                 }
-
                 valid = false;
             }
         })
-
         if (valid) {
             const emitted = {};
             emitted['parentObj'] = project;
@@ -140,8 +138,6 @@ export function renderNav(projects, live) {
 
         toggle.addEventListener('change',(event) => {
             if (!toggle.checked) {
-                project.render.remove();
-
                 events.emit('projectToggledOff', project);
             } else {
                 events.emit('projectToggledOn', project)
@@ -350,39 +346,4 @@ export function refreshProjects(projects) {
     clear(content);
 
     renderAllProjects(projects);
-
-    // projects.forEach((project) => {
-    //     //renderProject(project); -- doesn't work, needs to have parentNode
-    //
-    //     const projectRender = document.createElement('div');
-    //     projectRender.classList.add('project');
-    //     project.setRender(projectRender);
-    //
-    //     const buttonDel = document.createElement('button');
-    //     buttonDel.textContent = "X";
-    //     css(buttonDel, {
-    //         'align-self': 'flex-end'
-    //     })
-    //     buttonDel.addEventListener('click',(event) => {
-    //         const confirmed = confirm('Are you sure?')
-    //
-    //         if (confirmed) {
-    //             const deleted = event.target.closest('.project');
-    //             deleted.parentNode.removeChild(deleted);
-    //
-    //             events.emit('projectDeleted', project);
-    //         }
-    //     })
-    //     projectRender.appendChild(buttonDel);
-    //
-    //     renderAllTasks(project);
-    //     // const tasksContainer = renderAllTasks(project);
-    //     // projectRender.appendChild(tasksContainer);
-    //
-    //     renderCreateTask(project);
-    //     // const createTaskRender = renderCreateTask(project);
-    //     // projectRender.appendChild(createTaskRender);
-    //
-    //     document.querySelector('#content').appendChild(projectRender);
-    // });
 }
