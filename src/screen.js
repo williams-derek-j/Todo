@@ -145,8 +145,6 @@ export function renderNav(projects, live) {
                 events.emit('projectToggledOff', project);
             } else {
                 events.emit('projectToggledOn', project)
-
-                renderProject(project, live); // needs to come after event so live can update and renderProject can use live to correctly position new render
             }
         })
 
@@ -322,20 +320,11 @@ export function renderProject(project, live) {
         event.preventDefault();
 
         let dropped = JSON.parse(event.dataTransfer.getData('text'));
-        console.log(dropped);
-        console.log(dropped.details);
         dropped.details = JSON.parse(dropped.details);
-        console.log(dropped.details);
-        //event.dataTransfer.clearData('text');
 
         for (let key in taskMethods) {
             dropped[`${key}`] = taskMethods[key];
         }
-        dropped.setParent(project);
-        dropped.parent = (project);
-        console.log('droppedV')
-        console.log(dropped);
-        console.log('dropped^')
 
         let emitted = {
             task: dropped,

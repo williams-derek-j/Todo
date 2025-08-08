@@ -12,20 +12,13 @@ let live = [];
 renderNav(projects);
 
 function taskSubmitted(emitted) {
-    const task = emitted.parentObj.createTask(emitted.data.user, emitted.data.title, emitted.parentObj, emitted.data);
-    console.log('submitted VVV');
-    console.log(task);
-    console.log('submitted ^^^^');
+    const task = emitted.parentObj.createTask(emitted.data.user, emitted.data.title, emitted.data);
 
     renderTask(task, task.parent.render.querySelector('.tasksContainer'))
 }
 
 function taskDeleted(task) {
 
-    console.log("taskDeleted");
-    console.log(task);
-    console.log(task.parent);
-    console.log(task.getParent());
     task.parent.deleteTask(task);
 }
 
@@ -34,14 +27,9 @@ function taskEdited(emitted) {
 }
 
 function taskTransferred(emitted) {
-    //emitted.task.setParent(emitted.targetObj);
-    console.log('transfered VVV');
-    console.log(emitted.task);
-    let created = emitted.targetObj.createTask(emitted.task.user, emitted.task.title, emitted.task.parent, emitted.task.getDetails());
-    console.log(emitted.task);
-    console.log('transferred ^^^^');
 
-    //renderAllTasks(emitted.targetObj, emitted.targetObj.render.querySelector('.tasksContainer'));
+    let created = emitted.targetObj.createTask(emitted.task.user, emitted.task.title, emitted.task.getDetails());
+
     renderTask(created, emitted.targetObj.render.querySelector('.tasksContainer'));
 }
 
@@ -67,9 +55,12 @@ function projectToggledOn(project) {
             }
         }
     ))
+    renderProject(project, live);
 }
 
 function projectToggledOff(project) {
+    project.render.remove();
+
     live = live.filter((alive) => {
         return alive !== project;
     })

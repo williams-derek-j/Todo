@@ -7,9 +7,9 @@ export default class Task {
         this.parent = parent;
 
         this.index;
-        // this.date;
-        // this.description;
-        // this.priority;
+        this.date;
+        this.description;
+        this.priority;
 
         this.details = {};
         for (let key in props) {
@@ -26,17 +26,9 @@ export default class Task {
             if (key !== 'parent' && key !== 'render' && key !== 'details') {
                 nonCircular[key] = `${this[key]}`;
             } else if (key === 'details') {
-                console.log(this.details);
                 nonCircular['details'] = JSON.stringify(this['details']);
             }
         }
-        // console.log('nonCirc VV')
-        // console.log(nonCircular);
-        // console.log('nonCirc &&&');
-
-        // nonCircular = this;
-        // nonCircular.parent = null;
-
         return JSON.stringify(nonCircular);
     }
 
@@ -51,14 +43,6 @@ export default class Task {
     setRender(render, parentRender) {
         this.render = render;
     }
-
-    // function createSubTask(props) {
-    //     //
-    // }
-    //
-    // function removeSubTask(subTask) {
-    //     //
-    // }
 
     getDetails() {
         let detailsFiltered = {};
@@ -80,7 +64,11 @@ export default class Task {
         }
     }
 
-    setRenderParent(parentNew) {
-        this.renderParent = parentNew;
-    }
+    // function createSubTask(props) {
+    //     //
+    // }
+    //
+    // function removeSubTask(subTask) {
+    //     //
+    // }
 }
