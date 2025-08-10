@@ -1,8 +1,9 @@
 import "./style.css";
+import sort from "./sort.js";
 import User from "./user.js"
 import Project from "./project.js";
 import { events } from "./events";
-import { renderNav, renderProject, renderTask, renderAllTasks, refreshProjects } from "./screen.js";
+import { renderNav, renderProject, renderTask } from "./screen.js";
 
 const user = new User("user");
 
@@ -46,20 +47,13 @@ function projectSubmitted(data) {
 
 function projectToggledOn(project) {
     live.splice(project.index, 0, project);
-    live.sort((
-        function(a, b) {
-            if (a.index > b.index) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-    ))
+    live = sort(live);
+
     renderProject(project, live);
 }
 
 function projectToggledOff(project) {
-    project.render.remove();
+    // project.render.remove();
 
     live = live.filter((alive) => {
         return alive !== project;
@@ -73,8 +67,9 @@ function projectDeleted(deleted) {
     live = live.filter((project) => {
         return project !== deleted;
     })
+    live = sort(live);
 
-    renderNav(projects, live) // only need to call renderNav because we are /deleting/ a project, therefore not requiring re-rendering/refreshing, unlike creating/toggling on a project
+    renderNav(projects, live)
 }
 
 events.on('taskSubmitted', taskSubmitted);

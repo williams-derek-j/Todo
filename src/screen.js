@@ -139,6 +139,8 @@ export function renderNav(projects, live) {
         toggle.addEventListener('change',(event) => {
             if (!toggle.checked) {
                 events.emit('projectToggledOff', project);
+
+                project.render.remove();
             } else {
                 events.emit('projectToggledOn', project)
             }
@@ -158,7 +160,7 @@ export function renderNav(projects, live) {
     renderCreateProject(sidebar);
 }
 
-export function renderTask(task, tasksContainer) {
+export function renderTask(task, container) {
     const taskRender = document.createElement('div');
     taskRender.classList.add('task');
     taskRender.setAttribute('draggable', 'true');
@@ -238,7 +240,7 @@ export function renderTask(task, tasksContainer) {
         event.dataTransfer.setData('text', `${taskNonCircular}`)
     })
 
-    tasksContainer.append(taskRender);
+    container.append(taskRender);
     // return(taskRender);
 }
 
@@ -276,8 +278,12 @@ export function renderProject(project, live) {
         } else { // for projects that were toggled back on
             for (let i = 0; i < live.length; i++) {
                 if (live[i] === project) {
-                    if (live[i + 1]) {
+                    console.log(live[i]);
+                    console.log(live[i + 1]);
+                    if (typeof live[i + 1] === 'object') {
+                        console.log(live[i + 1])
                         nextRender = live[i + 1].render;
+                        console.log(nextRender);
 
                         reRender = true;
                     }

@@ -1,5 +1,3 @@
-import { events } from './events';
-
 export default class Task {
     constructor(user, title, parent, props) {
         this.user = user;
