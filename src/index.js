@@ -35,7 +35,7 @@ function taskEdited(emitted) {
 function taskTransferred(emitted) {
     console.log("taskTransferred", emitted);
 
-    let created = emitted.targetObj.createTask(emitted.task.user, emitted.task.title, emitted.task.getDetails());
+    let created = emitted.targetObj.createTask(emitted.task.user, emitted.task.getDetails());
 
     renderTask(created, emitted.targetObj.render.querySelector('.tasksContainer'));
 }

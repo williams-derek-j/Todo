@@ -25,6 +25,16 @@ export default class Project {
         }
     }
 
+    projectProperties = {
+        'input': {
+            'text': ['title','description'],
+            'date': ['due'],
+        },
+        'select': {
+            'priority': ['highest','high','medium','low','lowest'],
+        }
+    }
+
     // toJSONString() {
     //     const nonCircular = this;
     //
