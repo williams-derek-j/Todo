@@ -278,13 +278,9 @@ export function renderProject(project, live) {
         } else { // for projects that were toggled back on
             for (let i = 0; i < live.length; i++) {
                 if (live[i] === project) {
-                    console.log(live[i]);
-                    console.log(live[i + 1]);
                     if (typeof live[i + 1] === 'object') {
-                        console.log(live[i + 1])
-                        nextRender = live[i + 1].render;
-                        console.log(nextRender);
 
+                        nextRender = live[i + 1].render;
                         reRender = true;
                     }
                 }

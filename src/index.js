@@ -67,7 +67,7 @@ function projectDeleted(deleted) {
     live = live.filter((project) => {
         return project !== deleted;
     })
-    live = sort(live);
+    //live = sort(live);
 
     renderNav(projects, live)
 }
