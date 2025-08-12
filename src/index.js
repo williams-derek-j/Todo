@@ -57,7 +57,7 @@ function projectToggledOn(toggled) {
     console.log("projectToggledOn ", toggled);
 
     live.splice(toggled.index, 0, toggled);
-    live = sort(live);
+    live = sort(live, 'index');
 
     renderProject(toggled, live);
 }

@@ -1,7 +1,7 @@
-export default function sort(projects) {
+export default function sort(projects, property) {
     projects.sort((
         function(a, b) {
-            if (a.index > b.index) {
+            if (a[property] > b[property]) {
                 return 1;
             } else {
                 return -1;

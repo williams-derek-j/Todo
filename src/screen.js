@@ -254,6 +254,39 @@ function renderCreateProject(container) {
     //return(createProjectContainer);
 }
 
+function renderCreateUser(container) {
+    const createUserContainer = document.createElement("div");
+    createUserContainer.classList.add('createUserContainer');
+
+    const header = document.createElement('span');
+    header.textContent = 'User:';
+    createUserContainer.append(header);
+
+    //const usernameContainer = document.createElement('div');
+
+    // const label = document.createElement('label');
+    // label.setAttribute('for', 'prop');
+    // label.textContent = `${projectProperty}:`.toUpperCase();
+
+    const usernameInput = document.createElement(`input`);
+    usernameInput.setAttribute('type', 'text');
+    usernameInput.classList.add('createUser');
+    createUserContainer.append(usernameInput);
+
+    const buttonSubmit = document.createElement('button');
+    buttonSubmit.textContent = "Login";
+    buttonSubmit.addEventListener('click', (event) => {
+        const username = container.querySelector('.createUserContainer').querySelector('input.createUser').value;
+
+        if (username) {
+            events.emit('userSubmitted', username);
+        }
+    })
+    createUserContainer.append(buttonSubmit);
+
+    container.appendChild(createUserContainer);
+}
+
 export function renderNav(projects, live) {
     const togglesOld = Array.from(sidebar.querySelectorAll('input')).filter((node) => {
         return node.type === 'checkbox';
@@ -303,6 +336,7 @@ export function renderNav(projects, live) {
     sidebar.appendChild(projectsContainer);
 
     renderCreateProject(sidebar);
+    renderCreateUser(sidebar);
 }
 
 export function renderTask(task, container) {
