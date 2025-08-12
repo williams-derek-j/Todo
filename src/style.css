@@ -114,7 +114,7 @@ body {
 #content > .project > .tasksContainer > .task {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    /*justify-content: space-evenly;*/
 
     /*flex: auto;*/
     max-height: fit-content;
@@ -131,8 +131,59 @@ body {
     align-items: stretch;
 }
 
-#content > .project > .tasksContainer > .task > .miniContainer > span {
-    flex: auto;
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator {
+    align-self: center;
+
+    flex-grow: 0;
+
+    width: 4%;
+    height: 60%;
+
+    border-style: solid;
+    border-color: black;
+    border-width: thin;
+    border-radius: 100%;
+
+    box-sizing: border-box;
+
+    margin-left: 1%;
+}
+
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.highest {
+    background-color: darkred;
+}
+
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.high {
+    background-color: red;
+}
+
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.medium {
+    background-color: orange;
+}
+
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.low {
+    background-color: yellow;
+}
+
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.lowest {
+    background-color: yellowgreen;
+}
+
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.completed {
+    background-color: darkgreen;
+}
+
+#content > .project > .tasksContainer > .task > .miniContainer > .titleContainer {
+    justify-self: stretch;
+    align-self: stretch;
+    flex-grow: 1;
+
+    height: 100%;
+    width: 100%;
+
+    box-sizing: border-box;
+
+    text-align: center;
 }
 
 #content > .project > .tasksContainer > .task.expanded {

@@ -3,6 +3,7 @@ import css from "./css.js";
 import { events } from "./events.js";
 import { taskProperties } from "./taskProperties.js";
 import { taskMethods } from "./taskMethods.js";
+import { projectProperties } from "./projectProperties.js";
 
 // functions here should only call each other in one direction, i.e., like they're called in index.js, so all can be exported and used individually if needed without re-rendering whole content/sidebar divs
 // emit events and let index.js come back here to call the appropriate render function
@@ -16,21 +17,85 @@ function renderCreateTask(project, container) { // container is project
     const createTaskContainer = document.createElement('div');
     createTaskContainer.classList.add('createTaskContainer');
 
-    taskProperties.forEach((property) => {
-        const propContainer = document.createElement('div');
+    for (let medium in taskProperties) {
+        if (medium === 'input') {
+            for (let type in taskProperties[medium]) {
+                if (type === 'text') {
+                    taskProperties[medium][type].forEach((taskProperty) => {
+                        const propContainer = document.createElement('div');
 
-        const label = document.createElement('label');
-        label.setAttribute('for', 'prop');
-        label.textContent = `${property}:`.toUpperCase();
+                        const label = document.createElement('label');
+                        label.setAttribute('for', 'prop');
+                        label.textContent = `${taskProperty}:`.toUpperCase();
 
-        const prop = document.createElement(`input`);
-        prop.setAttribute('type', 'text');
-        prop.classList.add('createTask');
-        prop.classList.add(`${property}`.toLowerCase());
+                        const prop = document.createElement(`input`);
+                        prop.setAttribute('type', 'text');
+                        prop.classList.add('createTask');
+                        prop.classList.add(`${taskProperty}`.toLowerCase());
 
-        propContainer.append(label, prop);
-        createTaskContainer.append(propContainer);
-    })
+                        propContainer.append(label, prop);
+                        createTaskContainer.append(propContainer);
+                    })
+                } else if (type === 'date') {
+                    taskProperties[medium][type].forEach((taskProperty) => {
+                        const propContainer = document.createElement('div');
+
+                        const label = document.createElement('label');
+                        label.setAttribute('for', 'prop');
+                        label.textContent = `${taskProperty}:`.toUpperCase();
+
+                        const prop = document.createElement(`input`);
+                        prop.setAttribute('type', 'date');
+                        prop.classList.add('createTask');
+                        prop.classList.add(`${taskProperty}`.toLowerCase());
+
+                        propContainer.append(label, prop);
+                        createTaskContainer.append(propContainer);
+                    })
+                }
+            }
+        } else if (medium === 'select') {
+            for (let taskProperty in taskProperties[medium]) {
+                const propContainer = document.createElement('div');
+
+                const label = document.createElement('label');
+                label.setAttribute('for', 'prop');
+                label.textContent = `${taskProperty}:`.toUpperCase();
+
+                const prop = document.createElement(`select`);
+                prop.classList.add('createTask');
+                prop.classList.add(`${taskProperty}`.toLowerCase());
+
+                taskProperties[medium][taskProperty].forEach((value) => {
+                    const option = document.createElement(`option`);
+
+                    option.value = value;
+                    option.textContent = `${value}`.toUpperCase();
+
+                    prop.appendChild(option);
+                })
+
+                propContainer.append(label, prop);
+                createTaskContainer.append(propContainer);
+            }
+        }
+    }
+
+    // taskProperties.forEach((property) => {
+    //     const propContainer = document.createElement('div');
+    //
+    //     const label = document.createElement('label');
+    //     label.setAttribute('for', 'prop');
+    //     label.textContent = `${property}:`.toUpperCase();
+    //
+    //     const prop = document.createElement(`input`);
+    //     prop.setAttribute('type', 'text');
+    //     prop.classList.add('createTask');
+    //     prop.classList.add(`${property}`.toLowerCase());
+    //
+    //     propContainer.append(label, prop);
+    //     createTaskContainer.append(propContainer);
+    // })
 
     const buttonSubmit = document.createElement('button');
     buttonSubmit.textContent = "Submit";
@@ -38,7 +103,7 @@ function renderCreateTask(project, container) { // container is project
         const data = {}
 
         let valid = true;
-        const inputs = container.querySelectorAll('input.createTask');
+        const inputs = container.querySelector('.createTaskContainer').querySelectorAll('input.createTask');
         inputs.forEach((input) => {
             if (input.value !== "") {
                 if (input.className.includes('error')) {
@@ -54,7 +119,14 @@ function renderCreateTask(project, container) { // container is project
                 valid = false;
             }
         })
+
         if (valid) {
+            const selects = container.querySelector('.createTaskContainer').querySelectorAll('select.createTask')
+            selects.forEach((select) => {
+                const selectClassNameTaskProperty = select.className.replace('createTask ', '');
+                data[`${selectClassNameTaskProperty}`.toLowerCase()] = select.value;
+            });
+
             const emitted = {};
             emitted['parentObj'] = project;
             emitted['data'] = data;
@@ -76,30 +148,103 @@ function renderCreateProject(container) {
     header.textContent = 'New Project:';
     createProjectContainer.append(header);
 
-    taskProperties.forEach((property) => {
-        const detailInputContainer = document.createElement('div');
+    for (let medium in projectProperties) {
+        if (medium === 'input') {
+            for (let type in projectProperties[medium]) {
+                if (type === 'text') {
+                    projectProperties[medium][type].forEach((taskProperty) => {
+                        const propContainer = document.createElement('div');
 
-        const label = document.createElement('label');
-        label.setAttribute('for', 'detailInput');
-        label.textContent = `${property}:`.toUpperCase();
+                        const label = document.createElement('label');
+                        label.setAttribute('for', 'prop');
+                        label.textContent = `${taskProperty}:`.toUpperCase();
 
-        const detailInput = document.createElement(`input`);
-        detailInput.setAttribute('type', 'text');
-        detailInput.classList.add(`${property}`.toUpperCase());
+                        const prop = document.createElement(`input`);
+                        prop.setAttribute('type', 'text');
+                        prop.classList.add('createProject');
+                        prop.classList.add(`${taskProperty}`.toLowerCase());
 
-        detailInputContainer.append(label, detailInput);
-        createProjectContainer.append(detailInputContainer);
-    })
+                        propContainer.append(label, prop);
+                        createProjectContainer.append(propContainer);
+                    })
+                } else if (type === 'date') {
+                    projectProperties[medium][type].forEach((projectProperty) => {
+                        const propContainer = document.createElement('div');
+
+                        const label = document.createElement('label');
+                        label.setAttribute('for', 'prop');
+                        label.textContent = `${projectProperty}:`.toUpperCase();
+
+                        const prop = document.createElement(`input`);
+                        prop.setAttribute('type', 'date');
+                        prop.classList.add('createProject');
+                        prop.classList.add(`${projectProperty}`.toLowerCase());
+
+                        propContainer.append(label, prop);
+                        createProjectContainer.append(propContainer);
+                    })
+                }
+            }
+        } else if (medium === 'select') {
+            for (let projectProperty in projectProperties[medium]) {
+                const propContainer = document.createElement('div');
+
+                const label = document.createElement('label');
+                label.setAttribute('for', 'prop');
+                label.textContent = `${projectProperty}:`.toUpperCase();
+
+                const prop = document.createElement(`select`);
+                prop.classList.add('createProject');
+                prop.classList.add(`${projectProperty}`.toLowerCase());
+
+                projectProperties[medium][projectProperty].forEach((value) => {
+                    const option = document.createElement(`option`);
+
+                    option.value = value;
+                    option.textContent = `${value}`.toUpperCase();
+
+                    prop.appendChild(option);
+                })
+
+                propContainer.append(label, prop);
+                createProjectContainer.append(propContainer);
+            }
+        }
+    }
+
+    // projectProperties.forEach((property) => {
+    //     const detailInputContainer = document.createElement('div');
+    //
+    //     const label = document.createElement('label');
+    //     label.setAttribute('for', 'detailInput');
+    //     label.textContent = `${property}:`.toUpperCase();
+    //
+    //     const detailInput = document.createElement(`input`);
+    //     detailInput.setAttribute('type', 'text');
+    //     detailInput.classList.add(`${property}`.toUpperCase());
+    //
+    //     detailInputContainer.append(label, detailInput);
+    //     createProjectContainer.append(detailInputContainer);
+    // })
 
     const buttonSubmit = document.createElement('button');
     buttonSubmit.textContent = "Submit";
     buttonSubmit.addEventListener('click', (event) => {
         const data = {}
 
-        const inputs = container.querySelector('.createProjectContainer').querySelectorAll('input');
+        const inputs = container.querySelector('.createProjectContainer').querySelectorAll('input.createProject');
         inputs.forEach((input) => {
-            data[`${input.className}`.toLowerCase()] = input.value;
+            const inputClassNameProjectProperty = input.className.replace('createProject ', '');
+            data[`${inputClassNameProjectProperty}`.toLowerCase()] = input.value;
+
+            //data[`${input.className}`.toLowerCase()] = input.value;
         })
+
+        const selects = container.querySelector('.createProjectContainer').querySelectorAll('select.createProject')
+        selects.forEach((select) => {
+            const selectClassNameProjectProperty = select.className.replace('createProject ', '');
+            data[`${selectClassNameProjectProperty}`.toLowerCase()] = select.value;
+        });
 
         events.emit('projectSubmitted', data);
     })
@@ -180,7 +325,15 @@ export function renderTask(task, container) {
     })
     miniContainer.appendChild(buttonDel);
 
-    miniContainer.append(document.createElement('span').textContent = task.title);
+    const priorityIndicator = document.createElement('div');
+    priorityIndicator.classList.add('priorityIndicator');
+    priorityIndicator.classList.add(`${task.details.priority}`);
+    miniContainer.append(priorityIndicator);
+
+    const title = document.createElement('div');
+    title.classList.add('titleContainer');
+    title.textContent = task.details.title
+    miniContainer.append(title);
 
     const buttonExpand = document.createElement('button');
     buttonExpand.textContent = "V";
@@ -195,34 +348,38 @@ export function renderTask(task, container) {
             maxContainer.classList.add('maxContainer');
 
             const info = task.getDetails();
-            for (let key in info) {
-                const detailRender = document.createElement('div');
+            for (let detail in info) {
+                if (detail !== 'title' && detail !== 'priority') {
+                    const detailRender = document.createElement('div');
 
-                detailRender.classList.add(key);
-                detailRender.textContent = info[key];
+                    detailRender.classList.add(detail);
+                    detailRender.textContent = `${detail.toUpperCase()}: ${info[detail]}`;
 
-                const buttonEdit = document.createElement('button');
-                buttonEdit.textContent = "E";
-                buttonEdit.addEventListener('click', (event) => {
-                    const edited = event.target.closest('div');
+                    if (detail !== 'due') {
+                        const buttonEdit = document.createElement('button');
+                        buttonEdit.textContent = "E";
+                        buttonEdit.addEventListener('click', (event) => {
+                            const edited = event.target.closest('div');
 
-                    const valueNew = prompt("New Value:", `${edited.firstChild.textContent}`);
-                    if (valueNew !== null) {
-                        edited.childNodes.forEach((child) => {
-                            if (child.nodeType === Node.TEXT_NODE) {
-                                child.textContent = valueNew;
+                            const valueNew = prompt("New Value:", `${edited.firstChild.textContent}`);
+                            if (valueNew !== null) {
+                                edited.childNodes.forEach((child) => {
+                                    if (child.nodeType === Node.TEXT_NODE) {
+                                        child.textContent = `${detail.toUpperCase()}: ${valueNew}`;
+                                    }
+                                })
+                                const emitted = {}
+                                emitted['task'] = task;
+                                emitted['detailRender'] = edited;
+
+                                events.emit('taskEdited', emitted);
+                                //task.editDetail(edited) -- emit instead to keep this cleaner, i.e., don't edit backend from file meant to control frontend
                             }
                         })
-                        const emitted = {}
-                        emitted['task'] = task;
-                        emitted['detailRender'] = edited;
-
-                        events.emit('taskEdited', emitted);
-                        //task.editDetail(edited) -- emit instead to keep this cleaner, i.e., don't edit backend from file meant to control frontend
+                        detailRender.append(buttonEdit);
                     }
-                })
-                detailRender.append(buttonEdit);
-                maxContainer.append(detailRender)//document.createElement('div').textContent = info[key])
+                    maxContainer.append(detailRender)//document.createElement('div').textContent = info[key])
+                }
             }
             taskRender.append(maxContainer);
         } else {

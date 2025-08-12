@@ -2,18 +2,26 @@ import Task from './task.js';
 import makeID from './makeID.js';
 
 export default class Project {
-    constructor(user, title, props) {
+    constructor(user, props) {
         this.user = user;
-        this.title = title;
 
-        this.date;
+        this.title;
         this.description;
+        this.due;
         this.priority;
+
         this.index;
 
         this.tasks = [];
+
         for (let key in props) {
-            this[key] = props[key];
+            if (!(key === 'user')) {
+                if (key === 'due') {
+                    this[key] = new Date(props[key].value);
+                } else {
+                    this[key] = props[key];
+                }
+            }
         }
     }
 
@@ -29,8 +37,10 @@ export default class Project {
         this.render = render;
     }
 
-    createTask(user, title, props) {
-        let task = new Task(user, title, this, props);
+    createTask(user, props) {
+        let task = new Task(user, this, props);
+
+        task.index = this.tasks.length;
 
         this.tasks.push(task);
 

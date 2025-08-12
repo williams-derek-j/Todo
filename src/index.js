@@ -13,21 +13,27 @@ let live = [];
 renderNav(projects);
 
 function taskSubmitted(emitted) {
-    const task = emitted.parentObj.createTask(emitted.data.user, emitted.data.title, emitted.data);
+    console.log("taskSubmitted", emitted);
+
+    const task = emitted.parentObj.createTask(emitted.data.user, emitted.data);
 
     renderTask(task, task.parent.render.querySelector('.tasksContainer'))
 }
 
 function taskDeleted(task) {
+    console.log("taskDeleted", task);
 
     task.parent.deleteTask(task);
 }
 
 function taskEdited(emitted) {
+    console.log("taskEdited", emitted);
+
     emitted.task.editDetail(emitted.detailRender);
 }
 
 function taskTransferred(emitted) {
+    console.log("taskTransferred", emitted);
 
     let created = emitted.targetObj.createTask(emitted.task.user, emitted.task.title, emitted.task.getDetails());
 
@@ -35,7 +41,9 @@ function taskTransferred(emitted) {
 }
 
 function projectSubmitted(data) {
-    const created = new Project(data.user, data.title, data);
+    console.log("projectSubmitted", data);
+
+    const created = new Project(data.user, data);
     created.index = projects.length;
 
     projects.push(created);
@@ -45,29 +53,38 @@ function projectSubmitted(data) {
     renderNav(projects, live);
 }
 
-function projectToggledOn(project) {
-    live.splice(project.index, 0, project);
+function projectToggledOn(toggled) {
+    console.log("projectToggledOn ", toggled);
+
+    live.splice(toggled.index, 0, toggled);
     live = sort(live);
 
-    renderProject(project, live);
+    renderProject(toggled, live);
 }
 
-function projectToggledOff(project) {
+function projectToggledOff(toggled) {
+    console.log("projectToggledOff", toggled);
     // project.render.remove();
 
-    live = live.filter((alive) => {
-        return alive !== project;
+    live = live.filter((project) => {
+        return project !== toggled;
     })
 }
 
 function projectDeleted(deleted) {
+    console.log("projectDeleted", deleted);
+
     projects = projects.filter((project) => { // DOM node for project gets deleted upon click event, & emits projectDeleted event, so now remove project on backend
         return project !== deleted;
     })
     live = live.filter((project) => {
         return project !== deleted;
     })
-    //live = sort(live);
+    projects.forEach((project) => {
+        if (project.index > deleted.index) {
+            project.index--;
+        }
+    })
 
     renderNav(projects, live)
 }

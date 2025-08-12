@@ -1,10 +1,4 @@
-// export const taskProperties = [
-//     'title',
-//     'description',
-//     'priority',
-// ]
-
-export const taskProperties = {
+export const projectProperties = {
     'input': {
         'text': ['title','description'],
         'date': ['due'],

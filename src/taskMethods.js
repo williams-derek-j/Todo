@@ -1,6 +1,6 @@
 export const taskMethods = {
     toJSONString: function() {
-        let nonCircular = {};
+        const nonCircular = {};
 
         for (let key in this) {
             if (key !== 'parent' && key !== 'render' && key !== 'details') {
@@ -25,11 +25,15 @@ export const taskMethods = {
     },
 
     getDetails: function() {
-        let detailsFiltered = {};
+        const detailsFiltered = {};
 
         for (let key in this.details) {
             if (typeof this.details[key] !== 'object') {
                 detailsFiltered[key] = this.details[key];
+            } else {
+                if (key === 'due') {
+                    detailsFiltered[key] = this.details[key].toDateString();
+                }
             }
         }
         return (detailsFiltered);
@@ -38,6 +42,9 @@ export const taskMethods = {
     editDetail: function(detailEdited) {
         for (let key in this.details) {
             if (key === detailEdited.className) {
+                if (detailEdited.className === 'due') {
+                    this.details[key] = new Date(detailEdited) // detailEdited.something
+                }
                 this.details[key] = detailEdited.firstChild.textContent;
                 //console.log(this.details[key]);
             }
