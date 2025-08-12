@@ -4,11 +4,14 @@ export const taskMethods = {
 
         for (let key in this) {
             if (key !== 'parent' && key !== 'render' && key !== 'details') {
-                nonCircular[key] = `${this[key]}`;
+                if (typeof this[key] !== 'object' && typeof this[key] !== 'function') {
+                    nonCircular[key] = `${this[key]}`;
+                }
             } else if (key === 'details') {
                 nonCircular['details'] = JSON.stringify(this['details']);
             }
         }
+        console.log('nonCircularTask', nonCircular);
         return JSON.stringify(nonCircular);
     },
 

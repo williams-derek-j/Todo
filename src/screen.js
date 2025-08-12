@@ -254,7 +254,7 @@ function renderCreateProject(container) {
     //return(createProjectContainer);
 }
 
-function renderCreateUser(container) {
+export function renderCreateUser(container) {
     const createUserContainer = document.createElement("div");
     createUserContainer.classList.add('createUserContainer');
 
@@ -283,6 +283,22 @@ function renderCreateUser(container) {
         }
     })
     createUserContainer.append(buttonSubmit);
+
+    const buttonDelete = document.createElement('button');
+    buttonDelete.textContent = 'Delete User';
+    buttonDelete.addEventListener('click', (event) => {
+        const confirmed = confirm('Are you sure?')
+
+        if (confirmed) {
+            const username = container.querySelector('.createUserContainer').querySelector('input.createUser').value;
+
+            localStorage.removeItem(username);
+
+            events.emit('userDeleted', username);
+        }
+    })
+    createUserContainer.append(buttonDelete);
+
 
     container.appendChild(createUserContainer);
 }
@@ -348,16 +364,16 @@ export function renderTask(task, container) {
     const miniContainer = document.createElement('div');
     miniContainer.classList.add('miniContainer');
 
-    const buttonDel = document.createElement('button');
-    buttonDel.textContent = "X";
-    buttonDel.addEventListener('click',(event) => {
+    const buttonDelete = document.createElement('button');
+    buttonDelete.textContent = "X";
+    buttonDelete.addEventListener('click',(event) => {
         const deleted = event.target.closest('.task');
 
         deleted.parentNode.removeChild(deleted);
 
         events.emit('taskDeleted', task);
     })
-    miniContainer.appendChild(buttonDel);
+    miniContainer.appendChild(buttonDelete);
 
     const priorityIndicator = document.createElement('div');
     priorityIndicator.classList.add('priorityIndicator');
@@ -483,9 +499,9 @@ export function renderProject(project, live) {
     projectRender.classList.add('project');
     project.setRender(projectRender);
 
-    const buttonDel = document.createElement('button');
-    buttonDel.textContent = "X";
-    buttonDel.addEventListener('click',(event) => {
+    const buttonDelete = document.createElement('button');
+    buttonDelete.textContent = "X";
+    buttonDelete.addEventListener('click',(event) => {
         const confirmed = confirm('Are you sure?')
 
         if (confirmed) {
@@ -495,7 +511,7 @@ export function renderProject(project, live) {
             events.emit('projectDeleted', project);
         }
     })
-    projectRender.appendChild(buttonDel);
+    projectRender.appendChild(buttonDelete);
 
     renderAllTasks(project, projectRender);
 

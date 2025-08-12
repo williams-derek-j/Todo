@@ -1,5 +1,6 @@
 import Task from './task.js';
 import makeID from './makeID.js';
+import { projectMethods } from "./projectMethods";
 
 export default class Project {
     constructor(user, props) {
@@ -23,17 +24,39 @@ export default class Project {
                 }
             }
         }
-    }
 
-    projectProperties = {
-        'input': {
-            'text': ['title','description'],
-            'date': ['due'],
-        },
-        'select': {
-            'priority': ['highest','high','medium','low','lowest'],
+        for (let key in projectMethods) {
+            this[key] = projectMethods[key];
         }
     }
+
+    // projectProperties = {
+    //     'input': {
+    //         'text': ['title','description'],
+    //         'date': ['due'],
+    //     },
+    //     'select': {
+    //         'priority': ['highest','high','medium','low','lowest'],
+    //     }
+    // }
+
+    // toJSONString() {
+    //     const nonCircular = {};
+    //
+    //     for (let key in this) {
+    //         if (key !== 'render' && key !== 'tasks') {
+    //             nonCircular[key] = `${this[key]}`;
+    //         } else if (key === 'tasks') {
+    //             nonCircular['tasks'] = [];
+    //             this[key].forEach((task) => {
+    //                 nonCircular['tasks'].push(task.toJSONString());
+    //             })
+    //             console.log('nonCircProj:', nonCircular);
+    //             //nonCircular['tasks'] = JSON.stringify(this['tasks']);
+    //         }
+    //     }
+    //     return JSON.stringify(nonCircular);
+    // }
 
     // toJSONString() {
     //     const nonCircular = this;
