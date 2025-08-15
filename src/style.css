@@ -137,6 +137,58 @@ body {
 
     font-size: xx-large;
     font-weight: bold;
+
+    overflow: hidden;
+}
+
+#content > .project > .header > span {
+
+    overflow: scroll;
+
+    max-width: 80%;
+}
+
+#content > .project > .header > .priorityIndicator {
+    align-self: center;
+    margin-right: auto;
+
+    flex-grow: 0;
+
+    width: 6%;
+    height: 60%;
+
+    border-style: solid;
+    border-color: black;
+    border-width: thin;
+    border-radius: 100%;
+
+    box-sizing: border-box;
+
+    margin-left: 1%;
+}
+
+#content > .project > .header > .priorityIndicator.p0 {
+    background-color: darkred;
+}
+
+#content > .project > .header > .priorityIndicator.p1 {
+    background-color: red;
+}
+
+#content > .project > .header > .priorityIndicator.p2 {
+    background-color: orange;
+}
+
+#content > .project > .header > .priorityIndicator.p3 {
+    background-color: yellow;
+}
+
+#content > .project > .header > .priorityIndicator.p4 {
+    background-color: yellowgreen;
+}
+
+#content > .project > .header > .priorityIndicator.completed {
+    background-color: darkgreen;
 }
 
 #content > .project > .header > button {
@@ -269,11 +321,6 @@ body {
 }
 
 #content > .project > .tasksContainer > .task.expanded > .maxContainer > div > span {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: stretch;
-
     overflow: hidden;
 
     word-break: break-all;

@@ -267,6 +267,10 @@ export function renderNav(projects) {
     const togglesOldOff = togglesOld.filter((toggle) => {
         return toggle.checked === false;
     })
+    let sortBy = sidebar.querySelector('.sortContainer > select.sortProjects');
+    if (sortBy !== null) {
+        sortBy = sortBy.value;
+    }
     clear(sidebar);
 
     const projectsContainer = document.createElement("div");
@@ -323,6 +327,7 @@ export function renderNav(projects) {
     }
 
     const sortContainer = document.createElement('div');
+    sortContainer.classList.add('sortContainer');
 
     const sortLabel = document.createElement('label');
     sortLabel.setAttribute('for', 'selectSort');
@@ -330,7 +335,7 @@ export function renderNav(projects) {
     sortContainer.append(sortLabel);
 
     const selectSort = document.createElement('select');
-    selectSort.classList.add('sort');
+    selectSort.classList.add('sortProjects');
     selectSort.addEventListener('change', (event) => {
         events.emit('projectsSorted', event);
     })
@@ -340,6 +345,10 @@ export function renderNav(projects) {
 
         option.value = value;
         option.textContent = `${value}`.toUpperCase();
+
+        if (option.value === sortBy) {
+            option.selected = true;
+        }
 
         selectSort.append(option);
     })
@@ -396,8 +405,8 @@ export function renderTask(task, container) {
             for (let detail in info) {
                 if (detail !== 'title' && detail !== 'priority') {
                     const detailContainer = document.createElement('div');
-                    const detailRender = document.createElement('span');
 
+                    const detailRender = document.createElement('span');
                     detailRender.classList.add(detail);
                     detailRender.textContent = `${detail.toUpperCase()}: ${info[detail]}`;
                     detailContainer.appendChild(detailRender);
@@ -498,8 +507,16 @@ export function renderProject(project, live) {
 
     const header = document.createElement('div');
     header.classList.add('header');
-    header.textContent = `${project.title}`.toUpperCase();
-    //projectRender.appendChild(header);
+
+    const title = document.createElement('span');
+    title.classList.add('title');
+    title.textContent = `${project.title}`.toUpperCase();
+    header.append(title);
+
+    const priorityIndicator = document.createElement('div');
+    priorityIndicator.classList.add('priorityIndicator');
+    priorityIndicator.classList.add(`p${project.priority}`);
+    header.appendChild(priorityIndicator);
 
     const buttonDelete = document.createElement('button');
     buttonDelete.textContent = "X";
@@ -513,7 +530,7 @@ export function renderProject(project, live) {
             events.emit('projectDeleted', project);
         }
     })
-    header.append(buttonDelete);
+    header.appendChild(buttonDelete);
     projectRender.appendChild(header);
 
     renderAllTasks(project, projectRender);
@@ -533,6 +550,7 @@ export function renderProject(project, live) {
     }
 
     const sortContainer = document.createElement('div');
+    sortContainer.classList.add('sortContainer');
 
     const sortLabel = document.createElement('label');
     sortLabel.setAttribute('for', 'selectSort');
@@ -540,7 +558,7 @@ export function renderProject(project, live) {
     sortContainer.append(sortLabel);
 
     const selectSort = document.createElement('select');
-    selectSort.classList.add('sort');
+    selectSort.classList.add('sortTasks');
     selectSort.addEventListener('change', (event) => {
         events.emit('tasksSorted', {
             project: project,
