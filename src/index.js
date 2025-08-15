@@ -1,23 +1,23 @@
 import "./style.css";
+import { events } from "./events.js";
+import clear from "./clear.js";
 import sort from "./sort.js";
 import User from "./user.js"
 import Project from "./project.js";
-import { events } from "./events";
 import { renderNav, renderTask, renderProject, refreshProjects, renderCreateUser } from "./screen.js";
-import { taskMethods } from "./taskMethods";
+import { taskMethods } from "./taskMethods.js";
 import { projectMethods } from "./projectMethods.js";
 import { userMethods } from "./userMethods.js";
 
 let user;
 let live;
 
-//renderNav(projects);
 renderCreateUser(document.querySelector('#sidebar'));
 
-function taskSubmitted(emitted) {
+function taskSubmitted(submitted) {
     console.log("taskSubmitted", emitted);
 
-    const task = emitted.parentObj.createTask(emitted.data.user, emitted.data);
+    const task = submitted.parentObj.createTask(submitted.data.user, submitted.data);
 
     localStorage.setItem(user.name, user.toJSONString());
 
@@ -32,28 +32,28 @@ function taskDeleted(task) {
     localStorage.setItem(user.name, user.toJSONString());
 }
 
-function taskEdited(emitted) {
-    console.log("taskEdited", emitted);
+function taskEdited(edited) {
+    console.log("taskEdited", edited);
 
-    emitted.task.editDetail(emitted.detailRender);
+    edited.task.editDetail(edited.detailRender);
 
     localStorage.setItem(user.name, user.toJSONString());
 }
 
-function taskTransferred(emitted) {
-    console.log("taskTransferred", emitted);
+function taskTransferred(transferred) {
+    console.log("taskTransferred", transferred);
 
-    let created = emitted.targetObj.createTask(emitted.task.user, emitted.task.getDetails());
+    let created = transferred.targetObj.createTask(transferred.task.user, transferred.task.getDetails());
 
     localStorage.setItem(user.name, user.toJSONString());
 
-    renderTask(created, emitted.targetObj.render.querySelector('.tasksContainer'));
+    renderTask(created, transferred.targetObj.render.querySelector('.tasksContainer'));
 }
 
-function projectSubmitted(data) {
-    console.log("projectSubmitted", data);
+function projectSubmitted(submitted) {
+    console.log("projectSubmitted", submitted);
 
-    const created = new Project(data.user, data);
+    const created = new Project(submitted.user, submitted);
     created.index = user.projects.length;
 
     user.projects.push(created);
@@ -76,7 +76,6 @@ function projectToggledOn(toggled) {
 
 function projectToggledOff(toggled) {
     console.log("projectToggledOff", toggled);
-    // project.render.remove();
 
     live = live.filter((project) => {
         return project !== toggled;
@@ -118,26 +117,27 @@ function userSubmitted(username) {
 
         if (user.projects.length > 0) {
             let projectsParsed = JSON.parse(user.projects);
-            if (!Array.isArray(projectsParsed)) {   // parsing a list with one (1) stringified object seems to return the parsed object by itself rather than a parsed list containing object
+            if (!Array.isArray(projectsParsed)) {   // parsing a stringified list with one (1) stringified object seems to return the parsed object by itself rather than a parsed list containing stringified object
                 const temp = projectsParsed;
                 projectsParsed = [].push(temp);
             }
-
             user.projects = [];
 
             projectsParsed.forEach((project) => {
-                project = JSON.parse(project);
+                if (typeof project === 'string') {
+                    project = JSON.parse(project); // comment below won't make sense now that I've added this line to check if project is parsed already
+                }
 
                 let tasksParsed = JSON.parse(project.tasks);
-                if (!Array.isArray(tasksParsed)) { // parsing a list with one (1) stringified object seems to return the parsed object by itself rather than a parsed list containing object
+                if (!Array.isArray(tasksParsed)) { // parsing a stringified list with one (1) stringified object seems to return the parsed object by itself rather than a parsed list containing stringified object
                     const temp = tasksParsed;
                     tasksParsed = []
-                    tasksParsed.push(temp);
+                    tasksParsed.push(temp); // [].push(temp) didn't work here
                 }
                 project.tasks = [];
 
                 tasksParsed.forEach((task) => {
-                    if (typeof task === 'string') { // check if tasks are parsed already
+                    if (typeof task === 'string') { // check if task is parsed already -- idk why, parsing is weird and I don't understand how/why its output varies -- presumably when parsing a lit w/ one stringified object, the object gets extracted and parsed by itself rather than just the array containing it, and then I push it into a new temp array that replaces the parsed array -- but if this is the case, why is projectsParsed above different?
                         task = JSON.parse(task);
                     }
 
@@ -146,8 +146,10 @@ function userSubmitted(username) {
                     for (let key in taskMethods) {
                         task[`${key}`] = taskMethods[key];
                     }
+
                     project.tasks.push(task);
                 })
+
                 for (let key in projectMethods) {
                     project[`${key}`] = projectMethods[key];
                 }
@@ -165,10 +167,24 @@ function userSubmitted(username) {
         localStorage.setItem(username, user.toJSONString());
     }
 
-    live = [];
+    live = user.projects;
 
     refreshProjects(user.projects);
     renderNav(user.projects, live);
+}
+
+function userDeleted(username) {
+    console.log('userDeleted', username);
+
+    if (user.name === username) {
+        user = '';
+        live = [];
+
+        clear(sidebar);
+        clear(content);
+
+        renderCreateUser(sidebar);
+    }
 }
 
 events.on('taskSubmitted', taskSubmitted);
@@ -180,3 +196,4 @@ events.on('projectToggledOn', projectToggledOn);
 events.on('projectToggledOff', projectToggledOff);
 events.on('projectDeleted', projectDeleted);
 events.on('userSubmitted', userSubmitted);
+events.on('userDeleted', userDeleted);

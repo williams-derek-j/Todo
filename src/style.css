@@ -125,15 +125,25 @@ body {
     margin: 1%;
     padding: 1%;
 }
+#content > .project > .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
-#content > .project > button {
-    align-self: flex-end;
+    font-size: xx-large;
+    font-weight: bold;
+}
+
+#content > .project > .header > button {
+    align-self: flex-start;
 }
 
 #content > .project > .tasksContainer {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+
+    overflow: scroll;
 
     flex: auto;
 }
@@ -239,6 +249,10 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
+}
+
+#content > .project > .tasksContainer > .task.expanded > .maxContainer > div > button {
+    align-self: flex-start;
 }
 
 #content > .project > .createTaskContainer {

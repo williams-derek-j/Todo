@@ -13,7 +13,6 @@ export const userMethods = {
                 this[key].forEach((project) => {
                     nonCircular['projects'].push(project.toJSONString());
                 })
-                console.log('nonCircularUser', nonCircular);
                 nonCircular['projects'] = JSON.stringify(nonCircular['projects']);
             }
         }

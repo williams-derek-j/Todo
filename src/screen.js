@@ -1,5 +1,4 @@
 import clear from "./clear.js";
-import css from "./css.js";
 import { events } from "./events.js";
 import { taskProperties } from "./taskProperties.js";
 import { taskMethods } from "./taskMethods.js";
@@ -81,22 +80,6 @@ function renderCreateTask(project, container) { // container is project
         }
     }
 
-    // taskProperties.forEach((property) => {
-    //     const propContainer = document.createElement('div');
-    //
-    //     const label = document.createElement('label');
-    //     label.setAttribute('for', 'prop');
-    //     label.textContent = `${property}:`.toUpperCase();
-    //
-    //     const prop = document.createElement(`input`);
-    //     prop.setAttribute('type', 'text');
-    //     prop.classList.add('createTask');
-    //     prop.classList.add(`${property}`.toLowerCase());
-    //
-    //     propContainer.append(label, prop);
-    //     createTaskContainer.append(propContainer);
-    // })
-
     const buttonSubmit = document.createElement('button');
     buttonSubmit.textContent = "Submit";
     buttonSubmit.addEventListener('click', (event) => {
@@ -137,7 +120,6 @@ function renderCreateTask(project, container) { // container is project
     createTaskContainer.append(buttonSubmit);
 
     container.appendChild(createTaskContainer);
-    //return(createTaskContainer);
 }
 
 function renderCreateProject(container) {
@@ -212,21 +194,6 @@ function renderCreateProject(container) {
         }
     }
 
-    // projectProperties.forEach((property) => {
-    //     const detailInputContainer = document.createElement('div');
-    //
-    //     const label = document.createElement('label');
-    //     label.setAttribute('for', 'detailInput');
-    //     label.textContent = `${property}:`.toUpperCase();
-    //
-    //     const detailInput = document.createElement(`input`);
-    //     detailInput.setAttribute('type', 'text');
-    //     detailInput.classList.add(`${property}`.toUpperCase());
-    //
-    //     detailInputContainer.append(label, detailInput);
-    //     createProjectContainer.append(detailInputContainer);
-    // })
-
     const buttonSubmit = document.createElement('button');
     buttonSubmit.textContent = "Submit";
     buttonSubmit.addEventListener('click', (event) => {
@@ -236,8 +203,6 @@ function renderCreateProject(container) {
         inputs.forEach((input) => {
             const inputClassNameProjectProperty = input.className.replace('createProject ', '');
             data[`${inputClassNameProjectProperty}`.toLowerCase()] = input.value;
-
-            //data[`${input.className}`.toLowerCase()] = input.value;
         })
 
         const selects = container.querySelector('.createProjectContainer').querySelectorAll('select.createProject')
@@ -251,7 +216,6 @@ function renderCreateProject(container) {
     createProjectContainer.append(buttonSubmit);
 
     container.append(createProjectContainer);
-    //return(createProjectContainer);
 }
 
 export function renderCreateUser(container) {
@@ -261,12 +225,6 @@ export function renderCreateUser(container) {
     const header = document.createElement('span');
     header.textContent = 'User:';
     createUserContainer.append(header);
-
-    //const usernameContainer = document.createElement('div');
-
-    // const label = document.createElement('label');
-    // label.setAttribute('for', 'prop');
-    // label.textContent = `${projectProperty}:`.toUpperCase();
 
     const usernameInput = document.createElement(`input`);
     usernameInput.setAttribute('type', 'text');
@@ -298,7 +256,6 @@ export function renderCreateUser(container) {
         }
     })
     createUserContainer.append(buttonDelete);
-
 
     container.appendChild(createUserContainer);
 }
@@ -423,7 +380,6 @@ export function renderTask(task, container) {
                                 emitted['detailRender'] = edited;
 
                                 events.emit('taskEdited', emitted);
-                                //task.editDetail(edited) -- emit instead to keep this cleaner, i.e., don't edit backend from file meant to control frontend
                             }
                         })
                         detailRender.append(buttonEdit);
@@ -448,7 +404,6 @@ export function renderTask(task, container) {
     })
 
     container.append(taskRender);
-    // return(taskRender);
 }
 
 export function renderAllTasks(project, container) {
@@ -499,6 +454,11 @@ export function renderProject(project, live) {
     projectRender.classList.add('project');
     project.setRender(projectRender);
 
+    const header = document.createElement('div');
+    header.classList.add('header');
+    header.textContent = `${project.title}`.toUpperCase();
+    //projectRender.appendChild(header);
+
     const buttonDelete = document.createElement('button');
     buttonDelete.textContent = "X";
     buttonDelete.addEventListener('click',(event) => {
@@ -511,9 +471,46 @@ export function renderProject(project, live) {
             events.emit('projectDeleted', project);
         }
     })
-    projectRender.appendChild(buttonDelete);
+    header.append(buttonDelete);
+    projectRender.appendChild(header);
 
     renderAllTasks(project, projectRender);
+
+    const sortOptions = ['index'];
+
+    for (let medium in taskProperties) {
+        for (let type in taskProperties[medium]) {
+            if (medium !== 'select') {
+                taskProperties[medium][type].forEach((property) => {
+                    sortOptions.push(property);
+                })
+            } else {
+                sortOptions.push(type);
+            }
+        }
+    }
+
+    const sortContainer = document.createElement('div');
+
+    const sortLabel = document.createElement('label');
+    sortLabel.setAttribute('for', 'selectSort');
+    sortLabel.textContent = 'Sort by: ';
+    sortContainer.append(sortLabel);
+
+    const selectSort = document.createElement('select');
+    selectSort.classList.add('sort');
+
+    sortOptions.forEach((value) => {
+        console.log(value);
+        const option = document.createElement('option');
+
+        option.value = value;
+        option.textContent = `${value}`.toUpperCase();
+
+        selectSort.append(option);
+    })
+    sortContainer.append(selectSort);
+    projectRender.appendChild(sortContainer);
 
     renderCreateTask(project, projectRender);
 

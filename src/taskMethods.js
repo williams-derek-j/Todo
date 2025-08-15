@@ -11,7 +11,6 @@ export const taskMethods = {
                 nonCircular['details'] = JSON.stringify(this['details']);
             }
         }
-        console.log('nonCircularTask', nonCircular);
         return JSON.stringify(nonCircular);
     },
 
@@ -49,7 +48,6 @@ export const taskMethods = {
                     this.details[key] = new Date(detailEdited) // detailEdited.something
                 }
                 this.details[key] = detailEdited.firstChild.textContent;
-                //console.log(this.details[key]);
             }
         }
     },

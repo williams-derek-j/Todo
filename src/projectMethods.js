@@ -1,4 +1,4 @@
-import Task from "./task";
+import Task from "./task.js";
 
 export const projectMethods = {
     toJSONString: function() {
@@ -17,7 +17,6 @@ export const projectMethods = {
                 nonCircular['tasks'] = JSON.stringify(nonCircular['tasks']);
             }
         }
-        console.log('nonCircProj:', nonCircular);
         return JSON.stringify(nonCircular);
     },
 

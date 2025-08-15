@@ -1,5 +1,5 @@
-import { taskMethods } from './taskMethods';
-import { taskProperties } from './taskProperties';
+import { taskMethods } from './taskMethods.js';
+import { taskProperties } from './taskProperties.js';
 
 export default class Task {
     constructor(user, parent, props) {

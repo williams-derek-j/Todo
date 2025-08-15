@@ -1,4 +1,4 @@
-import { userMethods } from "./userMethods";
+import { userMethods } from "./userMethods.js";
 
 export default class User {
     constructor(name) {
@@ -9,22 +9,4 @@ export default class User {
             this[key] = userMethods[key];
         }
     }
-
-    // toJSONString() {
-    //     const nonCircular = {};
-    //
-    //     for (let key in this) {
-    //         if (key !== 'render' && key !== 'projects') {
-    //             nonCircular[key] = `${this[key]}`;
-    //         } else if (key === 'projects') {
-    //             nonCircular['projects'] = [];
-    //
-    //             this[key].forEach((project) => {
-    //                 nonCircular['projects'].push(project.toJSONString());
-    //             })
-    //             nonCircular['projects'] = JSON.stringify(this['projects']);
-    //         }
-    //     }
-    //     return JSON.stringify(nonCircular);
-    // }
 }
