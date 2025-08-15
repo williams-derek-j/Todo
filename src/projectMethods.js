@@ -1,4 +1,5 @@
 import Task from "./task.js";
+import { taskProperties } from "./taskProperties.js";
 
 export const projectMethods = {
     toJSONString: function() {
@@ -28,6 +29,17 @@ export const projectMethods = {
         let task = new Task(user, this, props);
 
         task.index = this.tasks.length;
+
+        let index = 0;
+        taskProperties['select']['priority'].forEach((value) => {
+            console.log(value);
+            console.log(task.details.priority);
+            console.log(task.details)
+            if (value === task.details.priority) {
+                task.details.priority = index;
+            }
+            index++;
+        })
 
         this.tasks.push(task);
 

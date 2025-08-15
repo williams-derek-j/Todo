@@ -186,23 +186,23 @@ body {
     margin-left: 1%;
 }
 
-#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.highest {
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.p0 {
     background-color: darkred;
 }
 
-#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.high {
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.p1 {
     background-color: red;
 }
 
-#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.medium {
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.p2 {
     background-color: orange;
 }
 
-#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.low {
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.p3 {
     background-color: yellow;
 }
 
-#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.lowest {
+#content > .project > .tasksContainer > .task > .miniContainer > .priorityIndicator.p4 {
     background-color: yellowgreen;
 }
 

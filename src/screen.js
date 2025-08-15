@@ -260,7 +260,7 @@ export function renderCreateUser(container) {
     container.appendChild(createUserContainer);
 }
 
-export function renderNav(projects, live) {
+export function renderNav(projects) {
     const togglesOld = Array.from(sidebar.querySelectorAll('input')).filter((node) => {
         return node.type === 'checkbox';
     })
@@ -334,7 +334,7 @@ export function renderTask(task, container) {
 
     const priorityIndicator = document.createElement('div');
     priorityIndicator.classList.add('priorityIndicator');
-    priorityIndicator.classList.add(`${task.details.priority}`);
+    priorityIndicator.classList.add(`p${task.details.priority}`);
     miniContainer.append(priorityIndicator);
 
     const title = document.createElement('div');
@@ -508,7 +508,6 @@ export function renderProject(project, live) {
     })
 
     sortOptions.forEach((value) => {
-        console.log(value);
         const option = document.createElement('option');
 
         option.value = value;

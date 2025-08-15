@@ -67,6 +67,7 @@ function tasksSorted(emitted) {
 
 function projectSubmitted(submitted) {
     console.log("projectSubmitted", submitted);
+    console.log(user.projects)
 
     const created = new Project(submitted.user, submitted);
     created.index = user.projects.length;
@@ -77,7 +78,8 @@ function projectSubmitted(submitted) {
     localStorage.setItem(user.name, user.toJSONString());
 
     renderProject(created);
-    renderNav(user.projects, live);
+    renderNav(user.projects);
+    console.log(user.projects)
 }
 
 function projectToggledOn(toggled) {
@@ -100,7 +102,7 @@ function projectToggledOff(toggled) {
 function projectDeleted(deleted) {
     console.log("projectDeleted", deleted);
 
-    user.projects = user.projects.filter((project) => { // DOM node for project gets deleted upon click event, & emits projectDeleted event, so now remove project on backend
+    user.projects = user.projects.filter((project) => { // all of this needs to go into userMethods and should get called from here // DOM node for project gets deleted upon click event, & emits projectDeleted event, so now remove project on backend
         return project !== deleted;
     })
     live = live.filter((project) => {
@@ -182,7 +184,10 @@ function userSubmitted(username) {
         localStorage.setItem(username, user.toJSONString());
     }
 
-    live = user.projects;
+    live = [];
+    user.projects.forEach((project) => {
+        live.push(project);
+    });
 
     refreshProjects(user.projects);
     renderNav(user.projects, live);
