@@ -67,7 +67,6 @@ function tasksSorted(emitted) {
 
 function projectSubmitted(submitted) {
     console.log("projectSubmitted", submitted);
-    console.log(user.projects)
 
     const created = new Project(submitted.user, submitted);
     created.index = user.projects.length;
@@ -79,11 +78,10 @@ function projectSubmitted(submitted) {
 
     renderProject(created);
     renderNav(user.projects);
-    console.log(user.projects)
 }
 
 function projectToggledOn(toggled) {
-    console.log("projectToggledOn ", toggled);
+    console.log("projectToggledOn", toggled);
 
     live.splice(toggled.index, 0, toggled);
     live = sort(live, 'index');
@@ -116,7 +114,19 @@ function projectDeleted(deleted) {
 
     localStorage.setItem(user.name, user.toJSONString());
 
-    renderNav(user.projects, live)
+    renderNav(user.projects)
+}
+
+function projectsSorted(event) {
+    console.log("projectsSorted", event);
+
+    const sortBy = event.target.value;
+
+    user.projects = sort(user.projects, sortBy); // necessary for rendering nav correctly
+    live = sort(live, sortBy);
+
+    refreshProjects(live);
+    renderNav(user.projects);
 }
 
 function userSubmitted(username) {
@@ -161,21 +171,21 @@ function userSubmitted(username) {
                     task.details = JSON.parse(task.details);
 
                     for (let key in taskMethods) {
-                        task[`${key}`] = taskMethods[key];
+                        task[key] = taskMethods[key];
                     }
 
                     project.tasks.push(task);
                 })
 
                 for (let key in projectMethods) {
-                    project[`${key}`] = projectMethods[key];
+                    project[key] = projectMethods[key];
                 }
 
                 user.projects.push(project);
             })
         }
         for (let key in userMethods) {
-            user[`${key}`] = userMethods[key];
+            user[key] = userMethods[key];
         }
         localStorage.setItem(username, user.toJSONString());
 
@@ -190,7 +200,7 @@ function userSubmitted(username) {
     });
 
     refreshProjects(user.projects);
-    renderNav(user.projects, live);
+    renderNav(user.projects);
 }
 
 function userDeleted(username) {
@@ -216,5 +226,6 @@ events.on('projectSubmitted', projectSubmitted);
 events.on('projectToggledOn', projectToggledOn);
 events.on('projectToggledOff', projectToggledOff);
 events.on('projectDeleted', projectDeleted);
+events.on('projectsSorted', projectsSorted)
 events.on('userSubmitted', userSubmitted);
 events.on('userDeleted', userDeleted);

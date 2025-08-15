@@ -261,7 +261,7 @@ export function renderCreateUser(container) {
 }
 
 export function renderNav(projects) {
-    const togglesOld = Array.from(sidebar.querySelectorAll('input')).filter((node) => {
+    const togglesOld = Array.from(sidebar.querySelectorAll('input')).filter((node) => { // to maintain untoggled projects when rerendering
         return node.type === 'checkbox';
     })
     const togglesOldOff = togglesOld.filter((toggle) => {
@@ -282,7 +282,7 @@ export function renderNav(projects) {
         toggle.project = project;
 
         togglesOldOff.forEach((oldOff) => {
-            if (toggle.project === oldOff.project) { // check if i dont need ID
+            if (toggle.project === oldOff.project) {
                 toggle.checked = false;
             }
         })
@@ -307,6 +307,44 @@ export function renderNav(projects) {
         projectsContainer.append(toggleContainer);
     })
     sidebar.appendChild(projectsContainer);
+
+    const sortOptions = ['index'];
+
+    for (let medium in projectProperties) {
+        for (let type in projectProperties[medium]) {
+            if (medium !== 'select') {
+                projectProperties[medium][type].forEach((property) => {
+                    sortOptions.push(property);
+                })
+            } else {
+                sortOptions.push(type);
+            }
+        }
+    }
+
+    const sortContainer = document.createElement('div');
+
+    const sortLabel = document.createElement('label');
+    sortLabel.setAttribute('for', 'selectSort');
+    sortLabel.textContent = 'Sort by: ';
+    sortContainer.append(sortLabel);
+
+    const selectSort = document.createElement('select');
+    selectSort.classList.add('sort');
+    selectSort.addEventListener('change', (event) => {
+        events.emit('projectsSorted', event);
+    })
+
+    sortOptions.forEach((value) => {
+        const option = document.createElement('option');
+
+        option.value = value;
+        option.textContent = `${value}`.toUpperCase();
+
+        selectSort.append(option);
+    })
+    sortContainer.append(selectSort);
+    sidebar.appendChild(sortContainer);
 
     renderCreateProject(sidebar);
     renderCreateUser(sidebar);
@@ -357,10 +395,12 @@ export function renderTask(task, container) {
             const info = task.getDetails();
             for (let detail in info) {
                 if (detail !== 'title' && detail !== 'priority') {
-                    const detailRender = document.createElement('div');
+                    const detailContainer = document.createElement('div');
+                    const detailRender = document.createElement('span');
 
                     detailRender.classList.add(detail);
                     detailRender.textContent = `${detail.toUpperCase()}: ${info[detail]}`;
+                    detailContainer.appendChild(detailRender);
 
                     if (detail !== 'due') {
                         const buttonEdit = document.createElement('button');
@@ -382,18 +422,18 @@ export function renderTask(task, container) {
                                 events.emit('taskEdited', emitted);
                             }
                         })
-                        detailRender.append(buttonEdit);
+                        detailContainer.appendChild(buttonEdit);
                     }
-                    maxContainer.append(detailRender)//document.createElement('div').textContent = info[key])
+                    maxContainer.appendChild(detailContainer)//document.createElement('div').textContent = info[key])
                 }
             }
-            taskRender.append(maxContainer);
+            taskRender.appendChild(maxContainer);
         } else {
             task.render.querySelector('.maxContainer').remove();
         }
     })
-    miniContainer.append(buttonExpand);
-    taskRender.append(miniContainer);
+    miniContainer.appendChild(buttonExpand);
+    taskRender.appendChild(miniContainer);
 
     taskRender.addEventListener('dragstart', (event) => {
 
@@ -437,13 +477,15 @@ export function renderProject(project, live) {
             project.render.remove();
 
             reRender = true;
-        } else { // for projects that were toggled back on
-            for (let i = 0; i < live.length; i++) {
-                if (live[i] === project) {
-                    if (typeof live[i + 1] === 'object') {
+        } else { // for projects that were toggled back on -- if I ever at one point decided to remove stale .render upon toggling projects off, this will introduce bug
+            if (live) { // necessary check for sorting -- don't need to set reRender flag
+                for (let i = 0; i < live.length; i++) {
+                    if (live[i] === project) {
+                        if (typeof live[i + 1] === 'object') {
 
-                        nextRender = live[i + 1].render;
-                        reRender = true;
+                            nextRender = live[i + 1].render;
+                            reRender = true;
+                        }
                     }
                 }
             }
@@ -499,7 +541,6 @@ export function renderProject(project, live) {
 
     const selectSort = document.createElement('select');
     selectSort.classList.add('sort');
-
     selectSort.addEventListener('change', (event) => {
         events.emit('tasksSorted', {
             project: project,

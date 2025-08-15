@@ -29,6 +29,14 @@ export default class Task {
             }
         }
 
+        let i = 0;
+        taskProperties['select']['priority'].forEach((value) => {
+            if (value === this.details.priority) {
+                this.details.priority = i;
+            }
+            i++;
+        })
+
         for (let key in taskMethods) {
             this[key] = taskMethods[key];
         }
