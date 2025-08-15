@@ -12,7 +12,10 @@ import { userMethods } from "./userMethods.js";
 let user;
 let live;
 
-renderCreateUser(document.querySelector('#sidebar'));
+const sidebar = document.querySelector("#sidebar");
+const content = document.querySelector("#content");
+
+renderCreateUser(sidebar);
 
 function taskSubmitted(submitted) {
     console.log("taskSubmitted", submitted);
