@@ -4,7 +4,7 @@ import clear from "./clear.js";
 import sort from "./sort.js";
 import User from "./user.js"
 import Project from "./project.js";
-import { renderNav, renderTask, renderProject, refreshProjects, renderCreateUser } from "./screen.js";
+import { renderNav, renderTask, renderAllTasks, renderProject, refreshProjects, renderCreateUser } from "./screen.js";
 import { taskMethods } from "./taskMethods.js";
 import { projectMethods } from "./projectMethods.js";
 import { userMethods } from "./userMethods.js";
@@ -15,7 +15,7 @@ let live;
 renderCreateUser(document.querySelector('#sidebar'));
 
 function taskSubmitted(submitted) {
-    console.log("taskSubmitted", emitted);
+    console.log("taskSubmitted", submitted);
 
     const task = submitted.parentObj.createTask(submitted.data.user, submitted.data);
 
@@ -48,6 +48,18 @@ function taskTransferred(transferred) {
     localStorage.setItem(user.name, user.toJSONString());
 
     renderTask(created, transferred.targetObj.render.querySelector('.tasksContainer'));
+}
+
+function tasksSorted(emitted) {
+    console.log("tasksSorted", emitted);
+
+    const sortBy = emitted.event.target.value;
+    let tasks = emitted.project.getAllTasks();
+
+    tasks = sort(tasks, sortBy);
+    emitted.project.tasks = tasks;
+
+    renderAllTasks(emitted.project, emitted.project.render);
 }
 
 function projectSubmitted(submitted) {
@@ -191,6 +203,7 @@ events.on('taskSubmitted', taskSubmitted);
 events.on('taskDeleted', taskDeleted);
 events.on('taskEdited', taskEdited);
 events.on('taskTransferred', taskTransferred);
+events.on('tasksSorted', tasksSorted);
 events.on('projectSubmitted', projectSubmitted);
 events.on('projectToggledOn', projectToggledOn);
 events.on('projectToggledOff', projectToggledOff);

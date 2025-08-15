@@ -38,6 +38,12 @@ export const projectMethods = {
         this.tasks = this.tasks.filter((task) => {
             return task !== deleted;
         })
+
+        this.tasks.forEach((task) => {
+            if (task.index > deleted.index) {
+                task.index--;
+            }
+        })
     },
 
     getAllTasks: function() {

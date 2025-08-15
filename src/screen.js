@@ -500,6 +500,13 @@ export function renderProject(project, live) {
     const selectSort = document.createElement('select');
     selectSort.classList.add('sort');
 
+    selectSort.addEventListener('change', (event) => {
+        events.emit('tasksSorted', {
+            project: project,
+            event: event
+        });
+    })
+
     sortOptions.forEach((value) => {
         console.log(value);
         const option = document.createElement('option');
