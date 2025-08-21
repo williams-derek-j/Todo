@@ -1,4 +1,5 @@
 import clear from "./clear.js";
+import generateErrorMessage from "./generateErrorMessage.js";
 import { events } from "./events.js";
 import { taskProperties } from "./taskProperties.js";
 import { taskMethods } from "./taskMethods.js";
@@ -25,12 +26,32 @@ function renderCreateTask(project, container) { // container is project
 
                         const label = document.createElement('label');
                         label.setAttribute('for', 'prop');
-                        label.textContent = `${taskProperty}:`.toUpperCase();
+                        label.textContent = `${taskProperty.property}:`.toUpperCase();
 
                         const prop = document.createElement(`input`);
                         prop.setAttribute('type', 'text');
                         prop.classList.add('createTask');
-                        prop.classList.add(`${taskProperty}`.toLowerCase());
+                        prop.classList.add(`${taskProperty.property}`.toLowerCase());
+
+                        for (let key in taskProperty) {
+                            prop.setAttribute(`${key}`,taskProperty[key]);
+                        }
+
+                        prop.addEventListener('input', (event) => {
+                            event.preventDefault();
+
+                            prop.setCustomValidity('');
+
+                            if (!prop.checkValidity()) {
+                                if (!prop.classList.contains('invalid')) {
+                                    prop.classList.add('invalid');
+                                }
+                            } else {
+                                if (prop.classList.contains('invalid')) {
+                                    prop.classList.remove('invalid');
+                                }
+                            }
+                        })
 
                         propContainer.append(label, prop);
                         createTaskContainer.append(propContainer);
@@ -41,12 +62,12 @@ function renderCreateTask(project, container) { // container is project
 
                         const label = document.createElement('label');
                         label.setAttribute('for', 'prop');
-                        label.textContent = `${taskProperty}:`.toUpperCase();
+                        label.textContent = `${taskProperty.property}:`.toUpperCase();
 
                         const prop = document.createElement(`input`);
                         prop.setAttribute('type', 'date');
                         prop.classList.add('createTask');
-                        prop.classList.add(`${taskProperty}`.toLowerCase());
+                        prop.classList.add(`${taskProperty.property}`.toLowerCase());
 
                         propContainer.append(label, prop);
                         createTaskContainer.append(propContainer);
@@ -88,19 +109,30 @@ function renderCreateTask(project, container) { // container is project
         let valid = true;
         const inputs = container.querySelector('.createTaskContainer').querySelectorAll('input.createTask');
         inputs.forEach((input) => {
-            if (input.value !== "") {
-                if (input.className.includes('error')) {
-                    input.classList.toggle('error');
-                }
-                const inputClassNameTaskProperty = input.className.replace('createTask ', '');
-                data[`${inputClassNameTaskProperty}`.toLowerCase()] = input.value;
+            input.setCustomValidity('');
 
-            } else {
-                if (!input.className.includes('error')) {
-                    input.classList.toggle('error')
-                }
+            if (!input.validity.valid) {
+                input.setCustomValidity(generateErrorMessage(input, input.validity));
+                input.reportValidity();
+
                 valid = false;
             }
+            const inputClassNameTaskProperty = input.className.replace('createTask ', '');
+            data[`${inputClassNameTaskProperty}`.toLowerCase()] = input.value;
+
+            // if (input.value !== "") {
+            //     if (input.className.includes('error')) {
+            //         input.classList.toggle('error');
+            //     }
+            //     const inputClassNameTaskProperty = input.className.replace('createTask ', '');
+            //     data[`${inputClassNameTaskProperty}`.toLowerCase()] = input.value;
+            //
+            // } else {
+            //     if (!input.className.includes('error')) {
+            //         input.classList.toggle('error')
+            //     }
+            //     valid = false;
+            // }
         })
 
         if (valid) {
@@ -134,17 +166,37 @@ function renderCreateProject(container) {
         if (medium === 'input') {
             for (let type in projectProperties[medium]) {
                 if (type === 'text') {
-                    projectProperties[medium][type].forEach((taskProperty) => {
+                    projectProperties[medium][type].forEach((projectProperty) => {
                         const propContainer = document.createElement('div');
 
                         const label = document.createElement('label');
                         label.setAttribute('for', 'prop');
-                        label.textContent = `${taskProperty}:`.toUpperCase();
+                        label.textContent = `${projectProperty.property}:`.toUpperCase();
 
                         const prop = document.createElement(`input`);
                         prop.setAttribute('type', 'text');
                         prop.classList.add('createProject');
-                        prop.classList.add(`${taskProperty}`.toLowerCase());
+                        prop.classList.add(`${projectProperty.property}`.toLowerCase());
+
+                        for (let key in projectProperty) {
+                            prop.setAttribute(`${key}`,projectProperty[key]);
+                        }
+
+                        prop.addEventListener('input', (event) => {
+                            event.preventDefault();
+
+                            prop.setCustomValidity('');
+
+                            if (!prop.checkValidity()) {
+                                if (!prop.classList.contains('invalid')) {
+                                    prop.classList.add('invalid');
+                                }
+                            } else {
+                                if (prop.classList.contains('invalid')) {
+                                    prop.classList.remove('invalid');
+                                }
+                            }
+                        })
 
                         propContainer.append(label, prop);
                         createProjectContainer.append(propContainer);
@@ -155,12 +207,16 @@ function renderCreateProject(container) {
 
                         const label = document.createElement('label');
                         label.setAttribute('for', 'prop');
-                        label.textContent = `${projectProperty}:`.toUpperCase();
+                        label.textContent = `${projectProperty.property}:`.toUpperCase();
 
                         const prop = document.createElement(`input`);
                         prop.setAttribute('type', 'date');
                         prop.classList.add('createProject');
-                        prop.classList.add(`${projectProperty}`.toLowerCase());
+                        prop.classList.add(`${projectProperty.property}`.toLowerCase());
+
+                        // for (let key in projectProperty) {
+                        //     prop.setAttribute(`${key}`,projectProperty[key]);
+                        // }
 
                         propContainer.append(label, prop);
                         createProjectContainer.append(propContainer);
@@ -197,10 +253,20 @@ function renderCreateProject(container) {
     const buttonSubmit = document.createElement('button');
     buttonSubmit.textContent = "Submit";
     buttonSubmit.addEventListener('click', (event) => {
-        const data = {}
+        let data = {}
+        let valid = true;
 
         const inputs = container.querySelector('.createProjectContainer').querySelectorAll('input.createProject');
         inputs.forEach((input) => {
+            input.setCustomValidity('');
+
+            if (!input.validity.valid) {
+                input.setCustomValidity(generateErrorMessage(input, input.validity));
+                input.reportValidity();
+
+                valid = false;
+            }
+
             const inputClassNameProjectProperty = input.className.replace('createProject ', '');
             data[`${inputClassNameProjectProperty}`.toLowerCase()] = input.value;
         })
@@ -211,7 +277,9 @@ function renderCreateProject(container) {
             data[`${selectClassNameProjectProperty}`.toLowerCase()] = select.value;
         });
 
-        events.emit('projectSubmitted', data);
+        if (valid) {
+            events.emit('projectSubmitted', data);
+        }
     })
     createProjectContainer.append(buttonSubmit);
 

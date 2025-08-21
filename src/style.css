@@ -1,3 +1,7 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
 body {
     display: flex;
     flex-direction: row;
@@ -76,6 +80,12 @@ body {
 
 #sidebar > .createProjectContainer > div > input {
     max-width: 95%;
+
+    box-sizing: border-box;
+}
+
+#sidebar > .createProjectContainer > div > input:invalid {
+    border: 3px dashed red;
 }
 
 #sidebar > .createUserContainer {
@@ -344,10 +354,25 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
+
+    box-sizing: border-box;
 }
 
-#content > .project > .createTaskContainer > div > input.error {
-    border: 1px solid red;
+#content > .project > .createTaskContainer > div > input {
+    max-width: 95%;
+
+    border: 1px solid black;
+
+    box-sizing: border-box;
+}
+
+#content > .project > .createTaskContainer > div > input.invalid {
+    max-width: 95%;
+    max-height: fit-content;
+
+    border: 3px dashed red;
+
+    box-sizing: border-box;
 }
 
 #content > .project > .createTaskContainer > div > button {
